@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.a1074718775qq.yichong.R;
 
+import com.a1074718775qq.yichong.R;
+
 public class AboutUsActivity extends AppCompatActivity {
 
     @Override

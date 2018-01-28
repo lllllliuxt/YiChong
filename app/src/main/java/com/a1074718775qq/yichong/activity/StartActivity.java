@@ -15,6 +15,8 @@ import android.view.animation.Animation;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.widget.PermissionsChecker;
 
+import com.a1074718775qq.yichong.R;
+
 public class StartActivity extends AppCompatActivity {
     Context mContext=StartActivity.this;
 
