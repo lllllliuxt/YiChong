@@ -1,9 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ddd"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".activity.AboutUsActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+
+        <Button
+            android:id="@+id/user_info_return_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@mipmap/returnbutton" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/verticalline" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关于我们"
+            android:textColor="@android:color/black"
+            android:textSize="20dp" />
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+       <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          android:background="#ddd">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="345dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="#eee">
+        ///////////下面添加图片的有错误
+        <cn.a1949science.www.bookrecord.widget.CircleImageView
+           android:id="@+id/user_info_icon"
+           android:layout_width="120dp"
+           android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:src="@mipmap/logo"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#000"/>
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="170dp"
+        android:layout_centerHorizontal="true"
+        android:text="      “益宠”把电子商务的经营模式与传统慈善公益结合起来运作，用电子商务的公开性、广泛参与性与社会优势，增加资金收入，降低管理成本与交流成本，服务慈善业务发展，奉献更多爱心。"
+        android:textColor="#111"
+        android:textSize="15dp" />
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="300dp"
+            android:layout_centerHorizontal="true"
+            android:text="团队地址          河北工业大学北辰校区"
+            android:textColor="#111"
+            android:textSize="15dp" />
+    </RelativeLayout>
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="60dp"
+               android:background="@android:color/white"
+               android:layout_marginRight="10dp"
+               android:layout_marginTop="20dp"
+               android:layout_marginLeft="10dp"
+               android:orientation="horizontal"
+               android:gravity="center_vertical">
+               <Button
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:text="联系我们"
+                   android:textColor="#fff"
+                   android:textSize="20dp"
+                   android:background="@android:color/holo_blue_bright"/>
+           </LinearLayout>
+       </LinearLayout>
+    </ScrollView>
+</LinearLayout>
