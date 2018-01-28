@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ddd"
+    android:background="#F2F2F2"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     tools:context=".activity.AdviceActivity">
@@ -13,18 +13,14 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
         <Button
-            android:id="@+id/user_info_return_button"
+            android:id="@+id/advice_return_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@mipmap/returnbutton"/>
-
-
         <ImageView
             android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:src="@mipmap/verticalline"/>
-
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,49 +28,32 @@
             android:textSize="20dp"
             android:textColor="@android:color/black"/>
     </android.support.v7.widget.Toolbar>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#eee"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical">
-
             <EditText
-                android:id="@+id/txtOne"
-                android:layout_width="320dp"
-                android:layout_height="320dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:id="@+id/advice_text"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
                 android:background="#fff"
-                android:layout_gravity="center_horizontal"
                 android:gravity="center"
                 android:hint="请给出您的宝贵意见！"
-                android:paddingTop="5dp"
                 android:selectAllOnFocus="true"
                 android:textColorHint="#95A1AA"
                 android:textSize="18sp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@android:color/white"
-                android:gravity="center_vertical"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginLeft="10dp"
-                >
                 <Button
-                    android:layout_width="match_parent"
+                    android:id="@+id/advice_confirm"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center_horizontal"
                     android:text="确定"
                     android:textColor="#fff"
                     android:textSize="20dp"
                     android:background="@android:color/holo_blue_bright"/>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-
 </LinearLayout>
