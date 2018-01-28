@@ -1,9 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff"
     tools:context=".activity.LoginActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/loginText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/login"
+            android:textSize="40sp"
+            android:layout_marginLeft="40dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/loginInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginTop="150dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_border">
+
+            <TextView
+                android:id="@+id/chinaPhoneNumber"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:gravity="center_vertical"
+                android:text="中国86"
+                android:layout_marginLeft="5dp" />
+            <ImageView
+                android:layout_width="5dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical"
+                android:background="@mipmap/verticalline"
+                android:contentDescription="@string/split" />
+            <EditText
+                android:id="@+id/phoneNumber"
+                android:maxLength="11"
+                android:selectAllOnFocus="true"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:singleLine="true"
+                tools:ignore="LabelFor" />
+            <Button
+                android:id="@+id/phoneNumberDelete"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
+                android:background="@mipmap/delete"
+                android:layout_marginRight="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_border">
+
+            <TextView
+                android:id="@+id/TextVerification"
+                android:layout_marginStart="5dp"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/code"
+                android:layout_marginLeft="5dp" />
+            <ImageView
+                android:layout_width="5dp"
+                android:layout_height="25dp"
+                android:background="@mipmap/verticalline"
+                android:contentDescription="@string/split" />
+            <EditText
+                android:id="@+id/verification"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/code_hide"
+                android:singleLine="true"
+                android:textColorHint="#95A1AA"
+                android:inputType="phone"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/VerificationButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/getVerification"
+                android:textSize="10sp"
+                tools:ignore="SmallSp"
+                android:layout_marginRight="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:layout_margin="20dp"
+                android:id="@+id/wechat"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@mipmap/wechat"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:layout_margin="20dp"
+                android:id="@+id/qq"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@mipmap/qq"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:layout_margin="20dp"
+                android:id="@+id/weibo"
+                android:layout_width="30dp"
+                android:layout_height="25dp"
+                android:background="@mipmap/webo"
+                tools:ignore="ButtonStyle" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+            android:id="@+id/loginButton"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/button_shape_default"
+            android:text="登录"
+            android:textSize="18sp"
+            app:spinning_bar_width="4dp"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp" />
+    </LinearLayout>
+</LinearLayout>
