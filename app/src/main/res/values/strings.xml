@@ -10,4 +10,7 @@
     <string name="getVerification">获取短信验证码</string>
     <string name="code_hide">请输入验证码</string>
     <string name="aboutUs">      “益宠”把电子商务的经营模式与传统慈善公益结合起来运作，用电子商务的公开性、广泛参与性与社会优势，增加资金收入，降低管理成本与交流成本，服务慈善业务发展，奉献更多爱心。</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
