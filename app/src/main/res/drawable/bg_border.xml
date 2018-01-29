@@ -4,5 +4,6 @@
         android:topRightRadius="5px"
         android:bottomRightRadius="5px"
         android:bottomLeftRadius="5px"/>
+    
     <stroke android:width="2px" android:color="#000"/>
 </shape>

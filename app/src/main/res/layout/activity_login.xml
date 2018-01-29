@@ -84,7 +84,7 @@
             android:gravity="center"
             android:background="@drawable/bg_border">
 
-            
+
             <TextView
                 android:id="@+id/TextVerification"
                 android:layout_marginStart="5dp"
