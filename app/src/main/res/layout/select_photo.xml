@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ddd"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/btn_camera"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:background="#eee"
+            android:textColor="#0f0f0f"
+            android:text="拍照"
+            android:shadowDx="0.5"
+            android:shadowDy="0.5"
+            android:shadowRadius="0.5"
+            android:shadowColor="#ffffff"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/btn_gallery"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:background="#eee"
+            android:textColor="#0f0f0f"
+            android:text="从相册中选择"
+            android:shadowDx="0.5"
+            android:shadowDy="0.5"
+            android:shadowRadius="0.5"
+            android:shadowColor="#ffffff"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#0e0e0e"
+            android:textColor="#eee"
+            android:textSize="18sp"
+            android:text="取消"
+            android:shadowDx="0.5"
+            android:shadowDy="0.5"
+            android:shadowRadius="0.5"
+            android:shadowColor="#ffffff"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>
