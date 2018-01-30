@@ -1,5 +1,6 @@
 package com.a1074718775qq.yichong.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,9 +24,11 @@ import com.a1074718775qq.yichong.activity.AdoptPetActivity;
 import com.a1074718775qq.yichong.activity.FindPetActivity;
 import com.a1074718775qq.yichong.adapter.WelfareRvAdapter;
 import com.a1074718775qq.yichong.bean.WelfareProject;
+import com.youth.xframe.utils.statusbar.XStatusBar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.widget.SearchView.*;
@@ -95,6 +98,11 @@ public class WelfareFragment extends Fragment implements OnQueryTextListener {
         view = inflater.inflate(R.layout.fragment_welfare, container, false);
         findView();
         onClick();
+        //浸入式状态栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         initCardview();
         return view;
     }

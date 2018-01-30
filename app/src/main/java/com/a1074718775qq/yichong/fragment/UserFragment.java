@@ -3,11 +3,13 @@ package com.a1074718775qq.yichong.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.a1074718775qq.yichong.R;
@@ -80,6 +82,11 @@ public class UserFragment extends Fragment {
        view=inflater.inflate(R.layout.fragment_user, container, false);
        findView();
        onClick();
+        //浸入式状态栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
        return view;
     }
 
