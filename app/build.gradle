@@ -37,4 +37,5 @@ dependencies {
     compile 'br.com.simplepass:loading-button-android:1.11.1'
     compile 'com.github.pinguo-zhouwei:MZBannerView:v2.0.0'
     compile 'com.youth.xframe:xframe:1.1.2'
+    compile 'com.huxq17.xrefreshview:xrefreshview:3.6.9'
 }

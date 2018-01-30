@@ -15,6 +15,7 @@ import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.adapter.RvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
+import com.andview.refreshview.XRefreshView;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
@@ -88,15 +89,22 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         findView();
         initBanner();
-        rv.setLayoutManager(new LinearLayoutManager(mContext, VERTICAL, false));
+        //初始化cardview
+        initCardview();
+        return view;
+    }
 
+    private void initCardview() {
+        //初始化cardview的数据
         initializeData();
+        //添加布局管理器
+        rv.setLayoutManager(new LinearLayoutManager(mContext, VERTICAL, false));
+        rv.setNestedScrollingEnabled(false);//禁止滑动
+        //添加适配器
         RvAdapter adapter = new RvAdapter(news,mContext);
         rv.setAdapter(adapter);
-        return view;
-
     }
-//初始化轮播图
+    //初始化轮播图
     private void initBanner() {
 
         List<Integer> list = new ArrayList<>();
