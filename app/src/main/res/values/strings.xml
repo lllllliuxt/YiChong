@@ -12,4 +12,7 @@
     <string name="Welfare_news">      “123公益日”，一场点缀着科技之光的公益盛典在北京举行。在这场轻松筹公益盛典中，阿凡题荣获“123年度公益爱心企业”奖。</string>
     <string name="Welfare_news_date">2017/10/17</string>
     <string name="aboutUs">      “益宠”把电子商务的经营模式与传统慈善公益结合起来运作，用电子商务的公开性、广泛参与性与社会优势，增加资金收入，降低管理成本与交流成本，服务慈善业务发展，奉献更多爱心。</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
