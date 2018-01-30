@@ -74,10 +74,11 @@
         android:layout_height="2px"
         android:background="#eee"
         android:layout_above="@id/main_bottom"/>
+
     <FrameLayout
+        android:id="@+id/ly_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/main_bottom"
-        android:id="@+id/ly_content">
-    </FrameLayout>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"></FrameLayout>
 </RelativeLayout>
