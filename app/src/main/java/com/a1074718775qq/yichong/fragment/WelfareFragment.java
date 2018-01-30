@@ -96,12 +96,6 @@ public class WelfareFragment extends Fragment implements OnQueryTextListener {
         findView();
         onClick();
         initCardview();
-        /*沉浸式标题栏*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        // 透明状态栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         return view;
     }
 //监听事件
