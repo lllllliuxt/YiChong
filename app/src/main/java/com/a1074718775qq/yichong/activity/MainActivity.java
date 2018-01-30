@@ -1,7 +1,9 @@
 package com.a1074718775qq.yichong.activity;
 
 
+
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView main_welfare;
     private TextView main_community;
     private TextView main_user;
-    private FrameLayout ly_content;
     //Fragment Object
     private HomeFragment fragment1;
     private WelfareFragment fragment2;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fManager=getSupportFragmentManager();
+        //防止程序长时间后台导致fragment重叠。
+
         findView();
         onClick();
         main_home.performClick();//模拟第一次点击
@@ -46,11 +49,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void findView() {
-        main_home=(TextView)findViewById(R.id.main_home);
-        main_welfare=(TextView)findViewById(R.id.main_welfare);
-        main_community=(TextView)findViewById(R.id.main_community);
-        main_user=(TextView)findViewById(R.id.main_user);
-        ly_content=(FrameLayout)findViewById(R.id.ly_content);
+        main_home= findViewById(R.id.main_home);
+        main_welfare= findViewById(R.id.main_welfare);
+        main_community= findViewById(R.id.main_community);
+        main_user= findViewById(R.id.main_user);
+        FrameLayout ly_content = findViewById(R.id.ly_content);
     }
     //隐藏所有Fragment
     private void hideAllFragment(FragmentTransaction fragmentTransaction){
@@ -64,14 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         FragmentTransaction fTransaction = fManager.beginTransaction();
         hideAllFragment(fTransaction);
-        /**
+        /*
          * 如果Fragment为空，就新建一个实例
          * 如果不为空，就将它从栈中显示出来
          */
         switch (v.getId()){
             case R.id.main_home:
                 setSelected();
-               main_home.setSelected(true);
+                main_home.setSelected(true);
                 if(fragment1 == null){
                    fragment1= new HomeFragment();
                     fTransaction.add(R.id.ly_content,fragment1);
@@ -119,7 +122,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         main_welfare.setSelected(false);
         main_user.setSelected(false);
     }
-
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment1 == null && fragment instanceof HomeFragment)
+            fragment1 = (HomeFragment) fragment;
+        if (fragment2 == null && fragment instanceof WelfareFragment)
+            fragment2 = (WelfareFragment) fragment;
+        if (fragment3 == null && fragment instanceof CommunityFragment)
+            fragment3 = (CommunityFragment) fragment;
+        if (fragment4 == null && fragment instanceof UserFragment)
+            fragment4 = (UserFragment) fragment;
+    }
     @Override
     public void onFragmentInteraction(Uri uri) {
 

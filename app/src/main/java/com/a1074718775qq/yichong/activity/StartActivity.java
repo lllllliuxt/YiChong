@@ -37,14 +37,15 @@ public class StartActivity extends AppCompatActivity {
         final View view = View.inflate(this, R.layout.activity_start, null);
         setContentView(view);
         mPermissionsChecker = new PermissionsChecker(this);
+
         /*沉浸式标题栏*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-
-
+        //淡入淡出
         AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
+
         //设置持续时间
         aa.setDuration(2000);
         view.startAnimation(aa);

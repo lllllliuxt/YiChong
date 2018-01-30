@@ -8,6 +8,7 @@
         android:id="@+id/news_cardview"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/XFrame_white"
         app:cardCornerRadius="10dp"
         app:cardMaxElevation="10dp"
