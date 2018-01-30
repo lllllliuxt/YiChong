@@ -1,14 +1,20 @@
 package com.a1074718775qq.yichong.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.a1074718775qq.yichong.R;
+import com.a1074718775qq.yichong.activity.AboutUsActivity;
+import com.a1074718775qq.yichong.activity.AdviceActivity;
+import com.a1074718775qq.yichong.activity.StartActivity;
+import com.a1074718775qq.yichong.activity.UserInfoActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +25,12 @@ import com.a1074718775qq.yichong.R;
  * create an instance of this fragment.
  */
 public class UserFragment extends Fragment {
+    Context mContext=getActivity();
+    View view;
+    private Button edit_info;
+    private Button user_advice;
+    private Button user_aboutus;
+    private Button exit;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,9 +77,48 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false);
+       view=inflater.inflate(R.layout.fragment_user, container, false);
+       findView();
+       onClick();
+       return view;
     }
 
+    private void onClick() {
+        edit_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), UserInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        user_advice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), AdviceActivity.class);
+                startActivity(intent);
+            }
+        });
+        user_aboutus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), AboutUsActivity.class);
+                startActivity(intent);
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              System.exit(0);
+            }
+        });
+    }
+    private void findView() {
+        edit_info=view.findViewById(R.id.edit_info);
+        user_advice=view.findViewById(R.id.user_advice);
+        user_aboutus=view.findViewById(R.id.user_aboutus);
+        exit=view.findViewById(R.id.exit);
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event

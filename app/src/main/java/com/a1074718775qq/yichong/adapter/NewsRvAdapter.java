@@ -14,14 +14,14 @@ import com.a1074718775qq.yichong.bean.PetNews;
 
 import java.util.List;
 
-public class RvAdapter extends RecyclerView.Adapter<RvAdapter.NewsViewHolder> {
+public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHolder> {
     Context mContext;
     private List<PetNews> news;
-    public RvAdapter()
+    public NewsRvAdapter()
     {
 
     }
-    public RvAdapter(List<PetNews> news,Context mContext)
+    public NewsRvAdapter(List<PetNews> news, Context mContext)
     {
         this.news=news;
         this.mContext=mContext;
@@ -45,12 +45,12 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.NewsViewHolder> {
         if (mContext == null){
             mContext = parent.getContext();
         }
-        View view = LayoutInflater.from(mContext).inflate(R.layout.cardview_item,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.news_cardview_item,parent,false);
         return new NewsViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RvAdapter.NewsViewHolder holder, int position) {
+    public void onBindViewHolder(NewsRvAdapter.NewsViewHolder holder, int position) {
         holder.image.setImageResource(news.get(position).getImage());
         holder.title.setText(news.get(position).getTitle());
         holder.introduction.setText(news.get(position).getIntroduction());

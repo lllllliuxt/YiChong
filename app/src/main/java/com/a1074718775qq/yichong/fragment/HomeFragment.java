@@ -12,10 +12,9 @@ import android.view.ViewGroup;
 
 
 import com.a1074718775qq.yichong.R;
-import com.a1074718775qq.yichong.adapter.RvAdapter;
+import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
-import com.andview.refreshview.XRefreshView;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
@@ -88,10 +87,15 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         findView();
+        onClick();
         initBanner();
         //初始化cardview
         initCardview();
         return view;
+    }
+
+    private void onClick() {
+
     }
 
     private void initCardview() {
@@ -101,7 +105,7 @@ public class HomeFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(mContext, VERTICAL, false));
         rv.setNestedScrollingEnabled(false);//禁止滑动
         //添加适配器
-        RvAdapter adapter = new RvAdapter(news,mContext);
+        NewsRvAdapter adapter = new NewsRvAdapter(news,mContext);
         rv.setAdapter(adapter);
     }
     //初始化轮播图
@@ -118,6 +122,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 //初始化新闻列
     private void initializeData(){
         news = new ArrayList<>();
@@ -136,8 +141,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void findView() {
-        mMZBanner = (MZBannerView) view.findViewById(R.id.home_banner);
-        rv= (RecyclerView)view.findViewById(R.id.news_list);
+        mMZBanner = view.findViewById(R.id.home_banner);
+        rv= view.findViewById(R.id.news_list);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
