@@ -37,11 +37,11 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.LoginActivity" />
@@ -58,7 +58,7 @@
         <activity android:name=".activity.AdoptPetActivity" />
         <activity android:name=".activity.FindPetActivity" />
         <activity android:name=".activity.PetShowActivity" />
-        <activity android:name=".activity.PermissionsActivity"></activity>
+        <activity android:name=".activity.PermissionsActivity" />
     </application>
 
 </manifest>
