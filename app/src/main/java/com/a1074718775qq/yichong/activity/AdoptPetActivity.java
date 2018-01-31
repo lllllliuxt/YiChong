@@ -33,6 +33,7 @@ import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.Toast;
 
 import com.a1074718775qq.yichong.widget.MyDialog;
+import com.a1074718775qq.yichong.widget.MyGridView;
 
 
 public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,MyDialog.OnButtonClickListener {
@@ -42,7 +43,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     public static final int PHOTOZOOM = 2; // 缩放
     public static final int PHOTORESOULT = 3;// 结果
     public static final String IMAGE_UNSPECIFIED = "image/*";
-    private GridView gridView; // 网格显示缩略图
+    private MyGridView gridView; // 网格显示缩略图
     private final int IMAGE_OPEN = 4; // 打开图片标记
     private String pathImage; // 选择图片路径
     private Bitmap bmp; // 导入临时图片
@@ -65,7 +66,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         initData();
     }
     private void init() {
-        gridView = (GridView) findViewById(R.id.gridView);
+        gridView = (MyGridView) findViewById(R.id.gridView);
         gridView.setOnItemClickListener(this);
         dialog = new MyDialog(this);
         dialog.setOnButtonClickListener(this);

@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
+        android:clipToPadding="true"
         android:minHeight="?android:attr/actionBarSize"
-        android:statusBarColor="@android:color/transparent"
         android:background="#f2f2f2"
         android:orientation="vertical">
         <android.support.v7.widget.Toolbar

@@ -79,14 +79,14 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       view=inflater.inflate(R.layout.fragment_user, container, false);
-       findView();
-       onClick();
+       view=inflater.inflate( R.layout.fragment_user, container, false);
         //浸入式状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
+       findView();
+       onClick();
        return view;
     }
 

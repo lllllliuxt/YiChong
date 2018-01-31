@@ -30,16 +30,25 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp">
+    <EditText
+        android:id="@+id/adopt_pet_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="5dp">
-
+        android:layout_height="225dp"
+        android:background="#fff"
+        android:gravity="start"
+        android:hint="向大家介绍你的萌宠吧…"
+        android:textColor="@color/black"
+        android:textSize="20dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:layout_marginTop="5dp">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -58,12 +67,13 @@
                 android:gravity="center"
                 android:text="（友情提示:图片最多可添加9张,点击可删除选择的图片）"
                 android:textSize="30px"
-                android:textColor="@color/black"/>
+                android:textColor="#666"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="225dp" >
-            <GridView
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <com.a1074718775qq.yichong.widget.MyGridView
                 android:id="@+id/gridView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,36 +83,28 @@
                 android:horizontalSpacing="5dp"
                 android:numColumns="3"
                 android:stretchMode="columnWidth"
-                android:verticalSpacing="5dp" />
+                android:verticalSpacing="5dp"
+                />
         </LinearLayout>
-        <Button
-            android:id="@+id/upload_photo_confirm"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="上传图片"
-            android:textColor="@android:color/black"
-            android:textSize="20dp"
-            android:background="@android:color/white"/>
-        <EditText
-            android:id="@+id/adopt_pet_text"
-            android:layout_width="match_parent"
-            android:layout_height="225dp"
+            android:layout_height="100dp"
             android:background="#fff"
-            android:gravity="start"
-            android:hint="向大家介绍你的萌宠吧…"
-            android:textColor="@color/black"
-            android:textSize="20dp" />
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            >
         <Button
             android:id="@+id/advice_confirm"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_gravity="center_horizontal"
             android:text="发布"
+            android:layout_gravity="center|center_vertical"
             android:textColor="#fff"
             android:textSize="20dp"
             android:background="@android:color/holo_blue_bright"/>
+        </LinearLayout>
     </LinearLayout>
     </ScrollView>
 
