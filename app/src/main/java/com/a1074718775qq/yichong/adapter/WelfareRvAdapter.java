@@ -55,10 +55,10 @@ public class WelfareRvAdapter extends RecyclerView.Adapter<WelfareRvAdapter.Welf
         TextView date;
         public WelfareViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.welfare_cardview);
-            image = (ImageView)itemView.findViewById(R.id.welfare_image);
-            title = (TextView)itemView.findViewById(R.id.welfare_title);
-            date = (TextView)itemView.findViewById(R.id.welfare_date);
+            cv = itemView.findViewById(R.id.welfare_cardview);
+            image = itemView.findViewById(R.id.welfare_image);
+            title = itemView.findViewById(R.id.welfare_title);
+            date = itemView.findViewById(R.id.welfare_date);
         }
     }
 }

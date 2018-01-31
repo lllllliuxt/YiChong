@@ -2,6 +2,7 @@ package com.a1074718775qq.yichong.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,17 +10,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
+import com.youth.xframe.utils.statusbar.XStatusBar;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.support.v7.widget.LinearLayoutManager.*;
 
@@ -88,6 +92,11 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         findView();
         onClick();
+        //浸入式状态栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         initBanner();
         //初始化cardview
         initCardview();
