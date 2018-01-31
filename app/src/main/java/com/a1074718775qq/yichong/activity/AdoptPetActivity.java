@@ -51,8 +51,8 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adopt_pet);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_adopt_pet);
         /*
          * 防止键盘挡住输入框 不希望遮挡设置activity属性 android:windowSoftInputMode="adjustPan"
          * 希望动态调整高度 android:windowSoftInputMode="adjustResize"
