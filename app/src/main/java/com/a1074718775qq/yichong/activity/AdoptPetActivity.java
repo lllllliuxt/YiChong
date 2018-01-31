@@ -32,10 +32,10 @@ import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.Toast;
 
-import com.yichong.dialog.MyDialog;
-import com.yichong.dialog.MyDialog.OnButtonClickListener;
+import com.a1074718775qq.yichong.widget.MyDialog;
 
-public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,OnButtonClickListener {
+
+public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,MyDialog.OnButtonClickListener {
     private MyDialog dialog;// 图片选择对话框
     public static final int NONE = 0;
     public static final int PHOTOHRAPH = 1;// 拍照
@@ -51,8 +51,8 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adopt_pet);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_adopt_pet);
         /*
          * 防止键盘挡住输入框 不希望遮挡设置activity属性 android:windowSoftInputMode="adjustPan"
          * 希望动态调整高度 android:windowSoftInputMode="adjustResize"
@@ -102,7 +102,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         gridView.setAdapter(simpleAdapter);
     }
 
-    @Override
+
     public void camera() {
         // TODO Auto-generated method stub
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -111,7 +111,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         startActivityForResult(intent, PHOTOHRAPH);
     }
 
-    @Override
+
     public void gallery() {
         // TODO Auto-generated method stub
         Intent intent = new Intent(Intent.ACTION_PICK,
@@ -120,7 +120,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
 
     }
 
-    @Override
+
     public void cancel() {
         // TODO Auto-generated method stub
         dialog.cancel();
