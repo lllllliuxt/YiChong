@@ -95,7 +95,7 @@
             android:gravity="center_vertical"
             >
         <Button
-            android:id="@+id/advice_confirm"
+            android:id="@+id/adopt_pet_upload"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

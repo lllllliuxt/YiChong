@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
         <Button
-            android:id="@+id/abopt_pet_return_button"
+            android:id="@+id/pet_show_return_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@mipmap/returnbutton" />
@@ -48,7 +48,36 @@
                     android:textColor="@color/black"
                     android:gravity="start" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
+                <com.a1074718775qq.yichong.widget.MyGridView
+                    android:id="@+id/pet_show_gridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:columnWidth="9dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="5dp"
+                    android:numColumns="2"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="5dp" />
+                <Button
+                    android:id="@+id/pet_show_upload"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_bright"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="发布"
+                    android:textColor="#fff"
+                    android:textSize="20dp" />
+            </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>
