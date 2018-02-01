@@ -202,12 +202,12 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         // TODO Auto-generated method stub
-        if (imageItem.size() == 5) { // 第一张为默认图片
+        if (imageItem.size() == 10) { // 第一张为默认图片
 
             if (position!=0) {
                 dialog(position);
             }else{
-                Toast.makeText(FindPetActivity.this, "图片数4张已满",
+                Toast.makeText(FindPetActivity.this, "图片数9张已满",
                         Toast.LENGTH_SHORT).show();
             }
 
