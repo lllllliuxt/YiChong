@@ -9,13 +9,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -41,10 +44,10 @@ import static android.widget.SearchView.*;
  * Use the {@link WelfareFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WelfareFragment extends Fragment implements OnQueryTextListener {
+public class WelfareFragment extends Fragment implements OnQueryTextListener{
     //上下文
+    View feedpet,pethome;//LinearLayout
     Context mContext=getActivity();
-    private Button feedpet,pethome;
     private List<WelfareProject> welfareProject;//对象列表
     RecyclerView rv;
     SearchView search;
@@ -108,24 +111,23 @@ public class WelfareFragment extends Fragment implements OnQueryTextListener {
     }
 //监听事件
     private void onClick() {
-       // 收养萌宠监听器
-        feedpet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getActivity(), AdoptPetActivity.class);
-                startActivity(intent);
-            }
-        });
-        //宝贝回家监听器
-        pethome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getActivity(), FindPetActivity.class);
-                startActivity(intent);
-            }
-        });
         //为搜索框加监听器
        search.setOnQueryTextListener(this);
+       feedpet.setOnClickListener(new OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent=new Intent(getActivity(),AdoptPetActivity.class);
+               startActivity(intent);
+           }
+       });
+        pethome.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),FindPetActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void initCardview() {
@@ -146,10 +148,10 @@ public class WelfareFragment extends Fragment implements OnQueryTextListener {
         welfareProject.add(new WelfareProject(R.drawable.photo3,"小偷入室偷窃，打伤金毛，事后为何还要主人赔偿？","2016/5/20"));
     }
     private void findView() {
-        feedpet=view.findViewById(R.id.welfare_feedpet);
-        pethome=view.findViewById(R.id.welfare_pethome);
         rv=view.findViewById(R.id.welfare_recyclerview);
         search=view.findViewById(R.id.welfare_search);
+        feedpet=(LinearLayout)view.findViewById(R.id.welfare_feedpet);
+        pethome=(LinearLayout)view.findViewById(R.id.welfare_pethome);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -194,6 +196,7 @@ public class WelfareFragment extends Fragment implements OnQueryTextListener {
         }
         return false;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

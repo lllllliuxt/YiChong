@@ -8,17 +8,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:clipToPadding="true"
+        android:minHeight="?android:attr/actionBarSize"
+        android:background="#f2f2f2"
         android:orientation="vertical">
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
             android:background="#aedbf7">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="首页"
+                android:text="我的"
                 android:textColor="#fff"
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
