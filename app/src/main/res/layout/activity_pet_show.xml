@@ -1,9 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.PetShowActivity">
+    tools:context=".activity.PetShowActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+        <Button
+            android:id="@+id/abopt_pet_return_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@mipmap/returnbutton" />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/verticalline" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="萌宠秀"
+            android:textColor="@android:color/black"
+            android:textSize="20dp" />
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="向大家介绍你的萌宠吧…"
+                    android:background="#fff"
+                    android:textColor="@color/black"
+                    android:gravity="start" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
