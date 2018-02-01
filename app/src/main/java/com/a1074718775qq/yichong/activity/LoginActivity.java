@@ -74,7 +74,7 @@ CircularProgressButton loginButton;
         getverification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /////////老公老公我太笨了，呜呜呜……
+              
             }
         });
     }
