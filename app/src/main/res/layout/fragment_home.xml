@@ -26,6 +26,7 @@
                 android:textColor="#fff"
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
+        <!-- 刷新-->
         <com.andview.refreshview.XRefreshView
             android:id="@+id/refreshview"
             android:layout_width="match_parent"

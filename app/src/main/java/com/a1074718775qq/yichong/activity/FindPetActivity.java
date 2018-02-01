@@ -30,6 +30,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -51,6 +52,7 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
     private Bitmap bmp; // 导入临时图片
     private ArrayList<HashMap<String, Object>> imageItem;
     private SimpleAdapter simpleAdapter; // 适配器
+    private Button returnButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +66,26 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // 锁定屏幕
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        findView();
+        onClick();
         init();
         initData();
     }
+
+    private void onClick() {
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void findView() {
+        returnButton=findViewById(R.id.find_pet_return_button);
+    }
+
+
     private void init() {
         gridView = (GridView) findViewById(R.id.gridView);
         gridView.setOnItemClickListener(this);

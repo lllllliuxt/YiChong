@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
         <Button
-            android:id="@+id/abopt_pet_return_button"
+            android:id="@+id/find_pet_return_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@mipmap/returnbutton" />
@@ -61,18 +61,12 @@
                     android:columnWidth="9dp"
                     android:gravity="center"
                     android:horizontalSpacing="5dp"
-                    android:numColumns="2"
+                    android:numColumns="3"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="5dp" />
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/photo1"/>
             </LinearLayout>
                 <Button
-                    android:id="@+id/about_us_confirm"
+                    android:id="@+id/find_pet_confirm"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/holo_blue_bright"

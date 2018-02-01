@@ -71,6 +71,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <service android:name="com.amap.api.location.APSService">
+        </service>
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="f2dee2b67c8bb8c1ffc8c6099c79a75f"/>
     </application>
 
     </manifest>
