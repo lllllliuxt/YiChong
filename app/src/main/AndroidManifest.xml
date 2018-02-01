@@ -62,6 +62,15 @@
         <activity android:name=".activity.FindPetActivity" />
         <activity android:name=".activity.PetShowActivity" />
         <activity android:name=".activity.PermissionsActivity" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.a1074718775qq.yichong.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
-</manifest>
+    </manifest>

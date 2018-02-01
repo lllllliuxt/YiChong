@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="external_files"
+        path="." />
+<!-- 照相机路径-->
+    <external-path
+        name="files_root"
+        path="Android/data/com.a1074718775qq.yichong/download/"/>
+</paths>

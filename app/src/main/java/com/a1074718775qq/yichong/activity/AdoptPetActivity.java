@@ -1,5 +1,8 @@
 package com.a1074718775qq.yichong.activity;
 
+import android.content.Context;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.a1074718775qq.yichong.R;
@@ -7,6 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -26,6 +32,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -37,6 +44,8 @@ import com.a1074718775qq.yichong.widget.MyGridView;
 
 
 public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,MyDialog.OnButtonClickListener {
+    private Context mContext=AdoptPetActivity.this;
+    private Button returnButton;
     private MyDialog dialog;// 图片选择对话框
     public static final int NONE = 0;
     public static final int PHOTOHRAPH = 1;// 拍照
@@ -48,7 +57,10 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     private String pathImage; // 选择图片路径
     private Bitmap bmp; // 导入临时图片
     private ArrayList<HashMap<String, Object>> imageItem;
-    private SimpleAdapter simpleAdapter; // 适配器
+    private SimpleAdapter simpleAdapter; // 适配器'
+    //照相机的相关变量
+    private  Uri contentUri;
+    private File file;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,9 +74,32 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // 锁定屏幕
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        file=new File(mContext.getExternalCacheDir(), "temp.jpg");
+        //判断安卓版本从而申请照相机
+        if(Build.VERSION.SDK_INT >=  Build.VERSION_CODES.N) {
+            contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.a1074718775qq.yichong.provider", file);
+        }else{
+            contentUri = Uri.fromFile(file);
+        }
         init();
         initData();
+        findView();
+        onClick();
     }
+
+    private void onClick() {
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void findView() {
+        returnButton=findViewById(R.id.abopt_pet_return_button);
+    }
+
     private void init() {
         gridView = (MyGridView) findViewById(R.id.gridView);
         gridView.setOnItemClickListener(this);
@@ -102,13 +137,10 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         });
         gridView.setAdapter(simpleAdapter);
     }
-
-
     public void camera() {
         // TODO Auto-generated method stub
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(
-                Environment.getExternalStorageDirectory(), "temp.jpg")));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,contentUri);
         startActivityForResult(intent, PHOTOHRAPH);
     }
 
@@ -137,11 +169,8 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         // 拍照
         if (requestCode == PHOTOHRAPH) {
             // 设置文件保存路径这里放在跟目录下
-            File picture = new File(Environment.getExternalStorageDirectory()
-                    + "/temp.jpg");
-            startPhotoZoom(Uri.fromFile(picture));
+            startPhotoZoom(contentUri);
         }
-
         if (data == null)
             return;
 
@@ -151,7 +180,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0-100)压缩文件
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);// (0-100)压缩文件
                 // 将图片放入gridview中
                 HashMap<String, Object> map = new HashMap<String, Object>();
                 map.put("itemImage", photo);
@@ -230,7 +259,6 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
                 Toast.makeText(AdoptPetActivity.this, "图片数9张已满",
                         Toast.LENGTH_SHORT).show();
             }
-
         } else if (position == 0) { // 点击图片位置为+ 0对应0张图片
             // 选择图片
             dialog.show();
@@ -267,6 +295,8 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     public void startPhotoZoom(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.putExtra("crop", "true");
         // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);
@@ -277,5 +307,4 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         intent.putExtra("return-data", true);
         startActivityForResult(intent, PHOTORESOULT);
     }
-
 }

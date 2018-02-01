@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AboutUsActivity;
@@ -27,6 +28,7 @@ import com.a1074718775qq.yichong.activity.UserInfoActivity;
  * create an instance of this fragment.
  */
 public class UserFragment extends Fragment {
+    View advice,aboutUs;//LinearLayout布局监听
     Context mContext=getActivity();
     View view;
     private Button edit_info;
@@ -99,14 +101,14 @@ public class UserFragment extends Fragment {
             }
         });
 
-        user_advice.setOnClickListener(new View.OnClickListener() {
+        advice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getActivity(), AdviceActivity.class);
                 startActivity(intent);
             }
         });
-        user_aboutus.setOnClickListener(new View.OnClickListener() {
+        aboutUs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getActivity(), AboutUsActivity.class);
@@ -122,8 +124,8 @@ public class UserFragment extends Fragment {
     }
     private void findView() {
         edit_info=view.findViewById(R.id.edit_info);
-        user_advice=view.findViewById(R.id.user_advice);
-        user_aboutus=view.findViewById(R.id.user_aboutus);
+        advice=(LinearLayout)view.findViewById(R.id.user_advice);
+        aboutUs=(LinearLayout)view.findViewById(R.id.user_aboutus);
         exit=view.findViewById(R.id.exit);
     }
 
