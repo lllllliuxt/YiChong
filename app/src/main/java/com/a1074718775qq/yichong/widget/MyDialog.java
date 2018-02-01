@@ -50,8 +50,8 @@ public class MyDialog extends Dialog implements View.OnClickListener {
 
     /**
      52      * 按钮的监听器
-     53      * @author Orathee
-     54      * @date 2014年3月20日 下午4:28:39
+     53      * @author xuruyu
+     54      * @date 2018/1/31
      55      */
      public interface OnButtonClickListener{
          void camera();

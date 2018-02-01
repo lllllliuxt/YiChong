@@ -1,11 +1,15 @@
 package com.a1074718775qq.yichong.activity;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.a1074718775qq.yichong.R;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,10 +20,10 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -42,6 +46,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     public static final int PHOTOZOOM = 2; // 缩放
     public static final int PHOTORESOULT = 3;// 结果
     public static final String IMAGE_UNSPECIFIED = "image/*";
+    public static File picture;//保存拍照的图片
     private GridView gridView; // 网格显示缩略图
     private final int IMAGE_OPEN = 4; // 打开图片标记
     private String pathImage; // 选择图片路径
@@ -102,16 +107,14 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         gridView.setAdapter(simpleAdapter);
     }
 
-
     public void camera() {
+
         // TODO Auto-generated method stub
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(
                 Environment.getExternalStorageDirectory(), "temp.jpg")));
         startActivityForResult(intent, PHOTOHRAPH);
     }
-
-
     public void gallery() {
         // TODO Auto-generated method stub
         Intent intent = new Intent(Intent.ACTION_PICK,
@@ -119,13 +122,15 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         startActivityForResult(intent, IMAGE_OPEN);
 
     }
-
-
     public void cancel() {
         // TODO Auto-generated method stub
         dialog.cancel();
     }
 
+
+    /*
+   * 判断sdcard是否被挂载
+   */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -135,12 +140,15 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
             return;
         // 拍照
         if (requestCode == PHOTOHRAPH) {
-            // 设置文件保存路径这里放在跟目录下
+            //獲取系統版本
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            // 激活相机
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // 设置文件保存路径，这里放在根目录下
             File picture = new File(Environment.getExternalStorageDirectory()
                     + "/temp.jpg");
             startPhotoZoom(Uri.fromFile(picture));
-        }
-
+                }
         if (data == null)
             return;
 
@@ -184,7 +192,6 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         super.onActivityResult(requestCode, resultCode, data);
 
     }
-
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -238,7 +245,6 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         }
 
     }
-
     /*
      * Dialog对话框提示用户删除操作 position为删除图片位置
      */
@@ -262,7 +268,6 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         });
         builder.create().show();
     }
-
     public void startPhotoZoom(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
