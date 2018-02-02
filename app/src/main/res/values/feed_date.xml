@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="feeddate">
+        <item>少于一个月</item>
+        <item>三个月</item>
+        <item>半年</item>
+        <item>一年及以上</item>
+    </string-array>
+</resources>

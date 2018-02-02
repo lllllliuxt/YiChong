@@ -44,6 +44,7 @@ public class WelfareRvAdapter extends RecyclerView.Adapter<WelfareRvAdapter.Welf
     public int getItemCount() {
         return welfareProject.size();
     }
+
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }

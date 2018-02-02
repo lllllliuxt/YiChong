@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="petitem">
+    <item>小狗</item>
+    <item>小猫</item>
+    <item>乌龟</item>
+    <item>仓鼠</item>
+    <item>鱼</item>
+    <item>小兔子</item>
+    <item>蛇</item>
+    <item>荷兰猪</item>
+    <item>松鼠</item>
+    <item>其他</item>
+    </string-array>
+</resources>

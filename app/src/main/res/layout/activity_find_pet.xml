@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
         <Button
-            android:id="@+id/abopt_pet_return_button"
+            android:id="@+id/find_pet_return_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@mipmap/returnbutton" />
@@ -50,12 +50,13 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="150dp"
                 android:background="#fff">
-                <com.a1074718775qq.yichong.widget.MyGridView
-                    android:id="@+id/find_pet_gridView"
+                <GridView
+                    android:id="@+id/gridView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_margin="5dp"
                     android:columnWidth="9dp"
                     android:gravity="center"
@@ -65,7 +66,7 @@
                     android:verticalSpacing="5dp" />
             </LinearLayout>
                 <Button
-                    android:id="@+id/find_pet_upload"
+                    android:id="@+id/find_pet_confirm"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/holo_blue_bright"
