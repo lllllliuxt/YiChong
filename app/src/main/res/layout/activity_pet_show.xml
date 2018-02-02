@@ -62,7 +62,7 @@
                     android:columnWidth="9dp"
                     android:gravity="center"
                     android:horizontalSpacing="5dp"
-                    android:numColumns="2"
+                    android:numColumns="3"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="5dp" />
                 <Button
@@ -77,7 +77,5 @@
                     android:textSize="20dp" />
             </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>
