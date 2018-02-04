@@ -1,7 +1,10 @@
 package com.a1074718775qq.yichong.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,8 +19,11 @@ import android.widget.LinearLayout;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AboutUsActivity;
 import com.a1074718775qq.yichong.activity.AdviceActivity;
+import com.a1074718775qq.yichong.activity.LoginActivity;
 import com.a1074718775qq.yichong.activity.StartActivity;
 import com.a1074718775qq.yichong.activity.UserInfoActivity;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -118,7 +124,29 @@ public class UserFragment extends Fragment {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              System.exit(0);
+                AlertDialog dlg = new AlertDialog.Builder(getActivity())
+                        .setTitle("退出登录？")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SharedPreferences sp = getActivity().getSharedPreferences("userData", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.clear();
+                                editor.apply();
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                //清空源来栈中的Activity，新建栈打开相应的Activity
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                        })
+                        .create();
+                dlg.show();
             }
         });
     }

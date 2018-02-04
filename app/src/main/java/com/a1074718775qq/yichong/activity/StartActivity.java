@@ -15,8 +15,6 @@ import android.view.animation.Animation;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.widget.PermissionsChecker;
 
-import com.a1074718775qq.yichong.R;
-
 public class StartActivity extends AppCompatActivity {
     Context mContext=StartActivity.this;
 
@@ -67,11 +65,13 @@ public class StartActivity extends AppCompatActivity {
     private void redirectTo(){
         //判断用户是否登录过
         SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
-        if (true) {
+        if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
+        {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
-        } else {
+        }
+        else {
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
             finish();
