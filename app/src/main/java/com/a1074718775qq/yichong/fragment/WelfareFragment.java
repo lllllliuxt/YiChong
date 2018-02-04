@@ -44,7 +44,7 @@ import static android.widget.SearchView.*;
  * Use the {@link WelfareFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WelfareFragment extends Fragment implements OnQueryTextListener{
+public class  WelfareFragment extends Fragment implements OnQueryTextListener{
     //上下文
     View feedpet,pethome;//LinearLayout
     Context mContext=getActivity();
