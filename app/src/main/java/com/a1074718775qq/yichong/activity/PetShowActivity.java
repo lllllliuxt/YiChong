@@ -54,8 +54,8 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_show);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_pet_show);
         /*
          * 防止键盘挡住输入框 不希望遮挡设置activity属性 android:windowSoftInputMode="adjustPan"
          * 希望动态调整高度 android:windowSoftInputMode="adjustResize"

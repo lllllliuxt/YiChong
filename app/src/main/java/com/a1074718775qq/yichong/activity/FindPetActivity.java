@@ -87,7 +87,7 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
 
 
     private void init() {
-        gridView = (GridView) findViewById(R.id.find_pet_gridView);
+        gridView = (GridView) findViewById(R.id.find_prt_gridView);
         gridView.setOnItemClickListener(this);
         dialog = new find_pet_dialog(this);
         dialog.setOnButtonClickListener(this);

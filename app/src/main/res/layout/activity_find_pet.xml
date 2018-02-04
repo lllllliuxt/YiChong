@@ -53,7 +53,7 @@
                 android:layout_height="150dp"
                 android:background="#fff">
                 <GridView
-                    android:id="@+id/gridView"
+                    android:id="@+id/find_prt_gridView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
