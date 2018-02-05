@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
 
 android {
     compileSdkVersion 27
@@ -20,6 +21,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    // 在MobSDK的扩展中注册SMSSDK的相关信息
+    MobSDK {
+        appKey "d580ad56b4b5"
+        appSecret "7fcae59a62342e7e2759e9e397c82bdd"
+        SMSSDK {}
     }
 }
 
