@@ -1,6 +1,10 @@
 package com.a1074718775qq.yichong.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +16,9 @@ import android.widget.TextView;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.bean.PetNews;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHolder> {
@@ -50,12 +57,25 @@ public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHo
     }
 
     @Override
-    public void onBindViewHolder(NewsRvAdapter.NewsViewHolder holder, int position) {
-        holder.image.setImageResource(news.get(position).getImage());
-        holder.title.setText(news.get(position).getTitle());
-        holder.introduction.setText(news.get(position).getIntroduction());
-    }
+    public void onBindViewHolder(final NewsRvAdapter.NewsViewHolder holder, final int position) {
+        //新建线程加载图片信息，发送到消息队列中
+        new Thread(new Runnable() {
 
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                final Bitmap bmp = getURLimage(news.get(position).getNews_picture());
+                holder.image.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.image.setImageBitmap(bmp);
+                    }
+                });
+            }
+        }).start();
+        holder.title.setText(news.get(position).getNews_title());
+        holder.introduction.setText(news.get(position).getNews_introduce());
+    }
     @Override
     public int getItemCount() {
         return news.size();
@@ -63,5 +83,40 @@ public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHo
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    //添加数据
+    public void addItem(List<PetNews> newDatas) {
+        //mTitles.add(position, data);
+       //notifyItemInserted(position);
+        newDatas.addAll(news);
+        news.removeAll(news);
+        news.addAll(newDatas);
+        //需要异步
+        notifyDataSetChanged();
+    }
+
+    public void addMoreItem(List<PetNews> newDatas) {
+        news.addAll(newDatas);
+    }
+
+    //加载图片
+    public Bitmap getURLimage(String url) {
+        Bitmap bmp = null;
+        try {
+            URL myurl = new URL(url);
+            // 获得连接
+            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
+            conn.setConnectTimeout(6000);//设置超时
+            conn.setDoInput(true);
+            conn.setUseCaches(false);//不缓存
+            conn.connect();
+            InputStream is = conn.getInputStream();//获得图片的数据流
+            bmp = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bmp;
     }
 }

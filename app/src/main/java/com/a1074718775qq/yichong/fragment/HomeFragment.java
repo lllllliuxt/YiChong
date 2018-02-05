@@ -4,26 +4,34 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
+import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
-import com.youth.xframe.utils.statusbar.XStatusBar;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.andview.refreshview.XRefreshView;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.*;
 
@@ -35,19 +43,22 @@ import static android.support.v7.widget.LinearLayoutManager.*;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{
     Context mContext=getActivity();
     private List<PetNews> news;//对象列表
     RecyclerView rv;
     View view;
     MZBannerView mMZBanner;
+    private XRefreshView refreshview;
     //加入轮播图的图片，后期会用网络加入
     int RES[]={R.drawable.photo1,R.drawable.photo2,R.drawable.photo3};
+    NewsRvAdapter adapter;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    //新闻id
+    private static int news_id=0;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -85,6 +96,7 @@ public class HomeFragment extends Fragment {
         }
     }
 //在下面对fragment进行布局
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,34 +104,131 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         findView();
         onClick();
+        //设置是否可以上拉刷新
+        refreshview.setPullLoadEnable(true);
         //浸入式状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         initBanner();
-        //初始化cardview
-        initCardview();
+        //请求服务器加载新闻
+        try {
+           requestFromsql();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void onClick() {
+            refreshview.setXRefreshViewListener(new XRefreshView.XRefreshViewListener() {
+                @Override
+                public void onRefresh() {
 
+                }
+                //下拉刷新事件监听，暂时用不到
+                @Override
+                public void onRefresh(boolean isPullDown) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshview.stopRefresh();
+                            long lastRefreshTime = refreshview.getLastRefreshTime();
+                        }
+                    }, 2000);
+                }
+                //上拉加载事件，每次加载五条新闻
+                @Override
+                public void onLoadMore(boolean isSilence) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                requestFromsql();
+                                //写入缓存
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            refreshview.stopLoadMore();
+                        }
+                    }, 2000);
+                }
+
+                @Override
+                public void onRelease(float direction) {
+
+                }
+
+                @Override
+                public void onHeaderMove(double headerMovePercent, int offsetY) {
+
+                }
+            });
     }
 
-    private void initCardview() {
-        //初始化cardview的数据
-        initializeData();
+
+
+    //从数据库中请求新闻
+    private void requestFromsql() throws Exception {
+        //把当前的news_id发给服务器，返回新闻对象
+        //创建一个Map对象
+        Map<String, Integer> map = new HashMap<>();
+        map.put("news_id", news_id);
+        //转成JSON数据
+        final String json = JSON.toJSONString(map,true);
+        HttpUtils.doPostAsy(getString(R.string.NewsInterface), json, new HttpUtils.CallBack() {
+            public void onRequestComplete(final String result) {
+                //打印结果
+                Log.e("返回结果", result);
+                List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
+                Log.e("news", "news::" + news);
+                if (!news.equals(null)) {
+                    //判断是不是初始化，如果是，则初始化
+                    if (news_id == 0) {
+                        initCardview(news);
+                        news_id = news_id + news.size();
+                    } else {
+                        //如果不是则在rv里面继续增加
+                        addCardview(news);
+                        news_id = news_id + news.size();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "没有更多可加载", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+//初始化cardview
+    private void initCardview(List<PetNews> news) {
         //添加布局管理器
-        rv.setLayoutManager(new LinearLayoutManager(mContext, VERTICAL, false));
+        final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
+        rv.setLayoutManager(lm);
         rv.setNestedScrollingEnabled(false);//禁止滑动
         //添加适配器
-        NewsRvAdapter adapter = new NewsRvAdapter(news,mContext);
+        adapter = new NewsRvAdapter(news,mContext);
         rv.setAdapter(adapter);
     }
+
+    //往cardview里加值
+    private void addCardview(List<PetNews> news)
+    {
+        adapter.addMoreItem(news);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     //初始化轮播图
     private void initBanner() {
-
         List<Integer> list = new ArrayList<>();
         for(int i=0;i<RES.length;i++){
             list.add(RES[i]);
@@ -132,13 +241,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-//初始化新闻列
-    private void initializeData(){
-        news = new ArrayList<>();
-        news.add(new PetNews(R.drawable.photo1,"老太太与狗狗朝夕相伴多年，狗狗忽然跳楼，却不见老太太露面","她叫英，老伴去世的早，英为了供儿子念书，很长一段时间在城市的各大工地上做和水泥的工作。白天英顶着太阳在工地上拼命，....."));
-        news.add(new PetNews(R.drawable.photo2,"主人晒出猫咪剪发时的表情，微博网友瞬间笑喷：让这眼神委屈到哭！","最近微博网友爆料：家里养了一只长毛猫，毛主任想着最近冬天到了嘛，由于猫只要一换季节，猫毛就会掉的家里到处都是的，所......"));
-        news.add(new PetNews(R.drawable.photo3,"小偷入室偷窃，打伤金毛，事后为何还要主人赔偿？","据网友微博爆料成：事情发生在一个老小区，虽然小区没有门禁的，但是也还算和谐，基本上都没有出现过偷盗事件。由于临近年......"));
-    }
     public void onPause() {
         super.onPause();
         mMZBanner.pause();//暂停轮播
@@ -152,15 +254,14 @@ public class HomeFragment extends Fragment {
     private void findView() {
         mMZBanner = view.findViewById(R.id.home_banner);
         rv= view.findViewById(R.id.news_list);
+        refreshview=view.findViewById(R.id.refreshview);
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -171,13 +272,11 @@ public class HomeFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
