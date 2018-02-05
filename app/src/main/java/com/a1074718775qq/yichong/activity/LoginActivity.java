@@ -286,3 +286,4 @@ CircularProgressButton loginButton;
         SMSSDK.unregisterAllEventHandler();
     };
 }
+
