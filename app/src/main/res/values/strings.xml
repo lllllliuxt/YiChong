@@ -17,4 +17,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="LoginInterface">http://112.74.188.94:8080/pet/login.jsp</string>
     <string name="NewsInterface">http://112.74.188.94:8080/pet/News.jsp</string>
+    <string name="WelfareInterface">http://112.74.188.94:8080/pet/Welfare.jsp</string>
 </resources>

@@ -1,23 +1,20 @@
 package com.a1074718775qq.yichong.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -27,11 +24,15 @@ import com.a1074718775qq.yichong.activity.AdoptPetActivity;
 import com.a1074718775qq.yichong.activity.FindPetActivity;
 import com.a1074718775qq.yichong.adapter.WelfareRvAdapter;
 import com.a1074718775qq.yichong.bean.WelfareProject;
-import com.youth.xframe.utils.statusbar.XStatusBar;
+import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.NetworkUtil;
+import com.alibaba.fastjson.JSON;
+import com.andview.refreshview.XRefreshView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.widget.SearchView.*;
@@ -48,10 +49,17 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
     //上下文
     View feedpet,pethome;//LinearLayout
     Context mContext=getActivity();
-    private List<WelfareProject> welfareProject;//对象列表
+    private ArrayList<WelfareProject> welfareFull;//对象列表
     RecyclerView rv;
     SearchView search;
+    XRefreshView refreshview;
     View view;
+    //网络工具
+    NetworkUtil network;
+//    福利适配器
+WelfareRvAdapter adapter;
+//收养所id
+    private int welfare_id=0;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -106,13 +114,70 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        initCardview();
+        welfareFull=new ArrayList<>();
+        //设置是否可以上拉刷新
+        refreshview.setPullLoadEnable(true);
+        //请求服务器加载新闻
+        network=new NetworkUtil();
+        //如果有网则请求服务器加载
+        if(network.isNetworkAvailable(getActivity()))
+        {
+            try {
+                requestFromsql();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+            refreshview.stopLoadMore();
+        }
         return view;
     }
-//监听事件
+    //请求数据库
+    private void requestFromsql() {
+        //把当前的news_id发给服务器，返回新闻对象
+        //创建一个Map对象
+        Map<String, Integer> map = new HashMap<>();
+        map.put("welfare_id", welfare_id);
+        //转成JSON数据
+        final String json = JSON.toJSONString(map,true);
+        try {
+            HttpUtils.doPostAsy(getString(R.string.WelfareInterface), json, new HttpUtils.CallBack() {
+                public void onRequestComplete(final String result) {
+                    //打印结果
+                    Log.e("返回结果", result);
+                    List<WelfareProject>  welfare = JSON.parseArray(result.trim(), WelfareProject.class);
+                    welfareFull.addAll(welfare);
+                    Log.e("welfare", "welfare::" + welfare);
+                    if (welfare.size() != 0) {
+                        //判断是不是初始化，如果是，则初始化
+                        if (welfare_id == 0) {
+                            initCardview(welfare);
+                            welfare_id = welfare_id + welfare.size();
+                        } else {
+                            //如果不是则在rv里面继续增加
+                            addCardview(welfare);
+                            welfare_id = welfare_id + welfare.size();
+                        }
+                    } else {
+                        refreshview.setHideFooterWhenComplete(true);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //监听事件
     private void onClick() {
         //为搜索框加监听器
        search.setOnQueryTextListener(this);
+//       收养萌宠
        feedpet.setOnClickListener(new OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -120,6 +185,7 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
                startActivity(intent);
            }
        });
+//       宝贝回家
         pethome.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,32 +193,100 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
                 startActivity(intent);
             }
         });
+        refreshview.setXRefreshViewListener(new XRefreshView.XRefreshViewListener() {
+            @Override
+            public void onRefresh() {
 
+            }
+
+            //下拉刷新事件监听，暂时用不到
+            @Override
+            public void onRefresh(boolean isPullDown) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshview.stopRefresh();
+                        long lastRefreshTime = refreshview.getLastRefreshTime();
+                    }
+                }, 2000);
+            }
+
+            //上拉加载事件，每次加载五条信息
+            @Override
+            public void onLoadMore(boolean isSilence) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(network.isNetworkAvailable(getActivity()))
+                        {
+                            try {
+                                requestFromsql();
+                                //写入缓存
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else
+                        {
+                            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+                        }
+                        refreshview.stopLoadMore();
+
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onRelease(float direction) {
+
+            }
+
+            @Override
+            public void onHeaderMove(double headerMovePercent, int offsetY) {
+
+            }
+        });
     }
-
-    private void initCardview() {
+//初始化cardview
+    private void initCardview(final List<WelfareProject>  welfare) {
+        final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
         //初始化cardview的数据
-        initializeData();
         //添加布局管理器
-        rv.setLayoutManager(new LinearLayoutManager(mContext, VERTICAL, false));
-        rv.setNestedScrollingEnabled(false);//禁止滑动
-        //添加适配器
-        WelfareRvAdapter adapter = new WelfareRvAdapter(welfareProject,mContext);
-        rv.setAdapter(adapter);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rv.setLayoutManager(lm);
+                rv.setNestedScrollingEnabled(false);//禁止滑动
+                //添加适配器
+                adapter = new WelfareRvAdapter(welfare,getActivity());
+                rv.setAdapter(adapter);
+            }
+        });
     }
-//初始化cardview的数据
-    private void initializeData() {
-        welfareProject = new ArrayList<>();
-        welfareProject.add(new WelfareProject(R.drawable.photo1,"老太太与狗狗朝夕相伴多年，狗狗忽然跳楼，却不见老太太露面","2017/12/30"));
-        welfareProject.add(new WelfareProject(R.drawable.photo2,"主人晒出猫咪剪发时的表情，微博网友瞬间笑喷：让这眼神委屈到哭！","2018/1/12"));
-        welfareProject.add(new WelfareProject(R.drawable.photo3,"小偷入室偷窃，打伤金毛，事后为何还要主人赔偿？","2016/5/20"));
+    //如果是下拉刷新的话
+    private void addCardview(List<WelfareProject> welfare) {
+        adapter.addMoreItem(welfare);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
+
     private void findView() {
         rv=view.findViewById(R.id.welfare_recyclerview);
         search=view.findViewById(R.id.welfare_search);
         feedpet=(LinearLayout)view.findViewById(R.id.welfare_feedpet);
         pethome=(LinearLayout)view.findViewById(R.id.welfare_pethome);
+        refreshview=view.findViewById(R.id.refreshview);
     }
+
+
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

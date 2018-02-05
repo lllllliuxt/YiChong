@@ -1,3 +1,4 @@
+
 package com.a1074718775qq.yichong.fragment;
 
 import android.content.Context;
@@ -24,6 +25,7 @@ import com.a1074718775qq.yichong.activity.NewsWebActivity;
 import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.a1074718775qq.yichong.utils.RecyclerItemClickListener;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
 import com.alibaba.fastjson.JSON;
@@ -52,15 +54,18 @@ import static android.support.v7.widget.LinearLayoutManager.*;
  */
 public class HomeFragment extends Fragment{
     Context mContext=getActivity();
-    private ArrayList<PetNews> fullnews=new ArrayList<>();
     //对象列表
+    private ArrayList<PetNews> fullnews=new ArrayList<>();
     RecyclerView rv;
     View view;
     MZBannerView mMZBanner;
     private XRefreshView refreshview;
     //加入轮播图的图片，后期会用网络加入
     int RES[]={R.drawable.photo1,R.drawable.photo2,R.drawable.photo3};
+    //新闻适配器
     NewsRvAdapter adapter;
+    //网络工具
+    NetworkUtil network;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -121,10 +126,20 @@ public class HomeFragment extends Fragment{
         }
         initBanner();
         //请求服务器加载新闻
-        try {
-           requestFromsql();
-        } catch (Exception e) {
-            e.printStackTrace();
+        network=new NetworkUtil();
+        //如果有网则请求服务器加载
+        if(network.isNetworkAvailable(getActivity()))
+        {
+            try {
+                requestFromsql();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+       else
+        {
+            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+            refreshview.stopLoadMore();
         }
         return view;
     }
@@ -155,13 +170,20 @@ public class HomeFragment extends Fragment{
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            requestFromsql();
-                            //写入缓存
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if(network.isNetworkAvailable(getActivity()))
+                        {
+                            try {
+                                requestFromsql();
+                                //写入缓存
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else
+                        {
+                            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
                         }
-                        refreshview.stopLoadMore();
+                            refreshview.stopLoadMore();
+
                     }
                 }, 2000);
             }
@@ -176,6 +198,8 @@ public class HomeFragment extends Fragment{
 
             }
         });
+
+
         //每条新闻的点击事件
         rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -192,38 +216,42 @@ public class HomeFragment extends Fragment{
         }));
 
     }
-            //从数据库中请求新闻
-    private void requestFromsql() throws Exception {
+   //从数据库中请求新闻
+    private void requestFromsql() {
         //把当前的news_id发给服务器，返回新闻对象
         //创建一个Map对象
         Map<String, Integer> map = new HashMap<>();
         map.put("news_id", news_id);
         //转成JSON数据
         final String json = JSON.toJSONString(map,true);
-        HttpUtils.doPostAsy(getString(R.string.NewsInterface), json, new HttpUtils.CallBack() {
-            public void onRequestComplete(final String result) {
-                //打印结果
-                Log.e("返回结果", result);
-                List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
-                fullnews.addAll(news);
-                Log.e("news", "news::" + fullnews);
-                if (news.size()!=0) {
-                    //判断是不是初始化，如果是，则初始化
-                    if (news_id == 0) {
-                        initCardview(news);
-                        news_id = news_id + news.size();
+        try {
+            HttpUtils.doPostAsy(getString(R.string.NewsInterface), json, new HttpUtils.CallBack() {
+                public void onRequestComplete(final String result) {
+                    //打印结果
+                    Log.e("返回结果", result);
+                    List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
+                    fullnews.addAll(news);
+                    Log.e("news", "news::" + fullnews);
+                    if (news.size() != 0) {
+                        //判断是不是初始化，如果是，则初始化
+                        if (news_id == 0) {
+                            initCardview(news);
+                            news_id = news_id + news.size();
+                        } else {
+                            //如果不是则在rv里面继续增加
+                            addCardview(news);
+                            news_id = news_id + news.size();
+                        }
                     } else {
-                        //如果不是则在rv里面继续增加
-                        addCardview(news);
-                        news_id = news_id + news.size();
+                        refreshview.setHideFooterWhenComplete(true);
                     }
                 }
-                else
-                {
-                    refreshview.setHideFooterWhenComplete(true);
-                }
-            }
-        });
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
+        }
     }
 
 //初始化cardview

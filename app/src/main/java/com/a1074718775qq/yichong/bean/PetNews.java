@@ -17,7 +17,6 @@ public class PetNews {
     {
 
     }
-
     public int getNews_id() {
         return news_id;
     }

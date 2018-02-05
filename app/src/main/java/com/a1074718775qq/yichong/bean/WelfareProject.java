@@ -1,39 +1,67 @@
 package com.a1074718775qq.yichong.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
+/**
+ * create by 刘晓童
+ * on 2018/2/5 0005
+ */
 public class WelfareProject {
-    int image;
-    String title;
-    String date;
-    public WelfareProject()
-    {}
-    public WelfareProject(int image,String title,String date)
+    @JSONField(name="welfare_id")
+    int welfare_id;
+    @JSONField(name="welfare_title")
+    String welfare_title;
+    @JSONField(name="welfare_address")
+   String welfare_address;
+    @JSONField(name="welfare_phone")
+    String welfare_phone;
+  @JSONField(name="welfare_picture")
+    String welfare_picture;
+    public  WelfareProject()
     {
-        this.image=image;
-        this.title=title;
-        this.date=date;
+
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public int getWelfare_id() {
+        return welfare_id;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getWelfare_address() {
+        return welfare_address;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getWelfare_phone() {
+        return welfare_phone;
     }
 
-    public int getImage() {
-        return image;
+    public String getWelfare_title() {
+        return welfare_title;
     }
 
-    public String getTitle() {
-        return title;
+    public String getWelfare_picture() {
+        return welfare_picture;
     }
 
-    public String getDate() {
-        return date;
+    public void setWelfare_address(String welfare_address) {
+        this.welfare_address = welfare_address;
+    }
+
+    public void setWelfare_id(int welfare_id) {
+        this.welfare_id = welfare_id;
+    }
+
+    public void setWelfare_phone(String welfare_phone) {
+        this.welfare_phone = welfare_phone;
+    }
+
+    public void setWelfare_picture(String welfare_picture) {
+        this.welfare_picture = welfare_picture;
+    }
+
+    public void setWelfare_title(String welfare_title) {
+        this.welfare_title = welfare_title;
+    }
+    public String toString() {
+        return "WelfareProject [welfare_id=" + welfare_id + ", welfare_title=" + welfare_title + ",welfare_address"+welfare_address+"welfare_phone"+welfare_phone+"welfare_picture"+welfare_picture+"]";
     }
 }

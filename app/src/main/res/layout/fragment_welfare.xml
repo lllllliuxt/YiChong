@@ -24,7 +24,11 @@
                 android:textColor="#fff"
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
-    <ScrollView
+        <com.andview.refreshview.XRefreshView
+            android:id="@+id/refreshview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    <com.andview.refreshview.XScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <LinearLayout
@@ -120,13 +124,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants">
-        <android.support.v7.widget.RecyclerView
+            <android.support.v7.widget.RecyclerView
             android:id="@+id/welfare_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
     </LinearLayout>
-    </ScrollView>
+    </com.andview.refreshview.XScrollView>
+        </com.andview.refreshview.XRefreshView>
     </LinearLayout>
 </FrameLayout>
