@@ -45,7 +45,7 @@ private Button getverification;
 private static String country="86";
 private int countSeconds = 60;//倒计时秒数
     @SuppressLint("HandlerLeak")
-    private Handler mCountHandler = new Handler() {
+private Handler mCountHandler = new Handler() {
         @SuppressLint("SetTextI18n")
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -143,7 +143,6 @@ CircularProgressButton loginButton;
                                     // TODO 处理验证成功的结果
                                     try {
                                         addDataToMysql(phoneNumber.getText().toString().trim(), System.currentTimeMillis());
-
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -192,14 +191,15 @@ CircularProgressButton loginButton;
         });
     }
     //将电话号码和登录时间写入服务器数据库
-    private void addDataToMysql(final String phoneNumber, final long logTime) throws Exception {
+    private void addDataToMysql(final String phoneNumber, final long logTime) throws Exception
+    {
         //把两个参数存到服务器中，返回userId
         //创建一个Map对象
         Map<String,Object> map = new HashMap<>();
         map.put("user_phone", phoneNumber);
         map.put("user_log_time",logTime);
         //转成JSON数据
-        final String json = JSON.toJSONString(map,true);
+       final String json = JSON.toJSONString(map,true);
         HttpUtils.doPostAsy(getString(R.string.LoginInterface), json, new HttpUtils.CallBack() {
             public void onRequestComplete(final String result) {
                 Log.e("返回结果",result);

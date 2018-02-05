@@ -27,11 +27,6 @@
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
         <!-- 刷新-->
-        <com.andview.refreshview.XRefreshView
-            android:id="@+id/refreshview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
         <com.andview.refreshview.XScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,19 +65,24 @@
                 android:textSize="18sp"
                 android:textColor="#333"
                 android:text="养宠趣闻"/>
-        </LinearLayout>
+             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/news_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
+                <com.andview.refreshview.XRefreshView
+                    android:id="@+id/refreshview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                <android.support.v7.widget.RecyclerView
+                 android:id="@+id/news_list"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+                 </android.support.v7.widget.RecyclerView>
+                </com.andview.refreshview.XRefreshView>
             </RelativeLayout>
         </LinearLayout>
         </com.andview.refreshview.XScrollView>
-        </com.andview.refreshview.XRefreshView>
     </LinearLayout>
 </FrameLayout>

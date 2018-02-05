@@ -1,41 +1,61 @@
 package com.a1074718775qq.yichong.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class PetNews {
-    int image;
-    String title;
-    String introduction;
+    @JSONField(name="news_id")
+    int news_id;
+    @JSONField(name="news_picture")
+    String news_picture;
+    @JSONField(name="news_title")
+    String news_title;
+    @JSONField(name="news_introduce")
+    String news_introduce;
+    @JSONField(name="news_url")
+    String news_url;
     public PetNews()
     {
 
     }
-    public PetNews(int image,String title,String introduction )
-    {
-        this.image=image;
-        this.title=title;
-        this.introduction=introduction;
+
+    public int getNews_id() {
+        return news_id;
+    }
+    public void setNews_id(int news_id) {
+        this.news_id = news_id;
+    }
+    public String getNews_picture() {
+        return news_picture;
     }
 
-    public int getImage() {
-        return image;
+    public String getNews_url() {
+        return news_url;
     }
 
-    public String getIntroduction() {
-        return introduction;
+    public void setNews_url(String news_url) {
+        this.news_url = news_url;
     }
 
-    public String getTitle() {
-        return title;
+    public String getNews_introduce() {
+        return news_introduce;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public String getNews_title() {
+        return news_title;
     }
 
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
+    public void setNews_picture(String news_picture) {
+        this.news_picture = news_picture;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setNews_introduce(String news_introduce) {
+        this.news_introduce = news_introduce;
+    }
+
+    public void setNews_title(String news_title) {
+        this.news_title = news_title;
+    }
+    public String toString() {
+        return "PetNews [news_id=" + news_id + ", news_picture=" + news_picture + ",news_title"+news_title+"news_introduce"+news_introduce+"news_url"+news_url+"]";
     }
 }
