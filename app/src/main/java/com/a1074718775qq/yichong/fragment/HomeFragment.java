@@ -168,8 +168,6 @@ public class HomeFragment extends Fragment{
             });
     }
 
-
-
     //从数据库中请求新闻
     private void requestFromsql() throws Exception {
         //把当前的news_id发给服务器，返回新闻对象
@@ -184,7 +182,7 @@ public class HomeFragment extends Fragment{
                 Log.e("返回结果", result);
                 List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
                 Log.e("news", "news::" + news);
-                if (!news.equals(null)) {
+                if (news.size()!=0) {
                     //判断是不是初始化，如果是，则初始化
                     if (news_id == 0) {
                         initCardview(news);
@@ -197,7 +195,7 @@ public class HomeFragment extends Fragment{
                 }
                 else
                 {
-                    Toast.makeText(getActivity(), "没有更多可加载", Toast.LENGTH_SHORT).show();
+                    refreshview.setHideFooterWhenComplete(true);
                 }
             }
         });
