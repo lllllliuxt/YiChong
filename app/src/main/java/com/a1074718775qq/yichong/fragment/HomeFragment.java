@@ -1,10 +1,12 @@
 package com.a1074718775qq.yichong.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,9 +20,11 @@ import android.widget.Toast;
 
 
 import com.a1074718775qq.yichong.R;
+import com.a1074718775qq.yichong.activity.NewsWebActivity;
 import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.RecyclerItemClickListener;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -29,8 +33,11 @@ import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.*;
@@ -45,7 +52,8 @@ import static android.support.v7.widget.LinearLayoutManager.*;
  */
 public class HomeFragment extends Fragment{
     Context mContext=getActivity();
-    private List<PetNews> news;//对象列表
+    private ArrayList<PetNews> fullnews=new ArrayList<>();
+    //对象列表
     RecyclerView rv;
     View view;
     MZBannerView mMZBanner;
@@ -123,52 +131,68 @@ public class HomeFragment extends Fragment{
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void onClick() {
-            refreshview.setXRefreshViewListener(new XRefreshView.XRefreshViewListener() {
-                @Override
-                public void onRefresh() {
+        refreshview.setXRefreshViewListener(new XRefreshView.XRefreshViewListener() {
+            @Override
+            public void onRefresh() {
 
-                }
-                //下拉刷新事件监听，暂时用不到
-                @Override
-                public void onRefresh(boolean isPullDown) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            refreshview.stopRefresh();
-                            long lastRefreshTime = refreshview.getLastRefreshTime();
+            }
+
+            //下拉刷新事件监听，暂时用不到
+            @Override
+            public void onRefresh(boolean isPullDown) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshview.stopRefresh();
+                        long lastRefreshTime = refreshview.getLastRefreshTime();
+                    }
+                }, 2000);
+            }
+
+            //上拉加载事件，每次加载五条新闻
+            @Override
+            public void onLoadMore(boolean isSilence) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            requestFromsql();
+                            //写入缓存
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }, 2000);
-                }
-                //上拉加载事件，每次加载五条新闻
-                @Override
-                public void onLoadMore(boolean isSilence) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                requestFromsql();
-                                //写入缓存
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            refreshview.stopLoadMore();
-                        }
-                    }, 2000);
-                }
+                        refreshview.stopLoadMore();
+                    }
+                }, 2000);
+            }
 
-                @Override
-                public void onRelease(float direction) {
+            @Override
+            public void onRelease(float direction) {
 
-                }
+            }
 
-                @Override
-                public void onHeaderMove(double headerMovePercent, int offsetY) {
+            @Override
+            public void onHeaderMove(double headerMovePercent, int offsetY) {
 
-                }
-            });
+            }
+        });
+        //每条新闻的点击事件
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                    Intent intent=new Intent(getActivity(), NewsWebActivity.class);
+                    intent.putExtra("url",fullnews.get(position).getNews_url());
+                    startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int posotion) {
+
+            }
+        }));
+
     }
-
-    //从数据库中请求新闻
+            //从数据库中请求新闻
     private void requestFromsql() throws Exception {
         //把当前的news_id发给服务器，返回新闻对象
         //创建一个Map对象
@@ -181,7 +205,8 @@ public class HomeFragment extends Fragment{
                 //打印结果
                 Log.e("返回结果", result);
                 List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
-                Log.e("news", "news::" + news);
+                fullnews.addAll(news);
+                Log.e("news", "news::" + fullnews);
                 if (news.size()!=0) {
                     //判断是不是初始化，如果是，则初始化
                     if (news_id == 0) {
@@ -202,14 +227,19 @@ public class HomeFragment extends Fragment{
     }
 
 //初始化cardview
-    private void initCardview(List<PetNews> news) {
+    private void initCardview(final List<PetNews> news) {
         //添加布局管理器
         final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
-        rv.setLayoutManager(lm);
-        rv.setNestedScrollingEnabled(false);//禁止滑动
-        //添加适配器
-        adapter = new NewsRvAdapter(news,mContext);
-        rv.setAdapter(adapter);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rv.setLayoutManager(lm);
+                rv.setNestedScrollingEnabled(false);//禁止滑动
+                //添加适配器
+                adapter = new NewsRvAdapter(news,mContext);
+                rv.setAdapter(adapter);
+            }
+        });
     }
 
     //往cardview里加值
@@ -218,11 +248,11 @@ public class HomeFragment extends Fragment{
         adapter.addMoreItem(news);
 
         getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        });
+        @Override
+        public void run() {
+            adapter.notifyDataSetChanged();
+        }
+    });
     }
 
     //初始化轮播图
