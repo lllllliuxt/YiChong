@@ -202,21 +202,26 @@ public class HomeFragment extends Fragment{
     }
 
 //初始化cardview
-    private void initCardview(List<PetNews> news) {
+    private void initCardview(final List<PetNews> news) {
         //添加布局管理器
         final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
-        rv.setLayoutManager(lm);
-        rv.setNestedScrollingEnabled(false);//禁止滑动
-        //添加适配器
-        adapter = new NewsRvAdapter(news,mContext);
-        rv.setAdapter(adapter);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rv.setLayoutManager(lm);
+                rv.setNestedScrollingEnabled(false);//禁止滑动
+                //添加适配器
+                adapter = new NewsRvAdapter(news,mContext);
+                rv.setAdapter(adapter);
+            }
+        });
+
     }
 
     //往cardview里加值
     private void addCardview(List<PetNews> news)
     {
         adapter.addMoreItem(news);
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
