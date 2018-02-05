@@ -33,7 +33,7 @@ public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHo
         this.news=news;
         this.mContext=mContext;
     }
-    public static class NewsViewHolder extends RecyclerView.ViewHolder {
+    public static class NewsViewHolder extends RecyclerView.ViewHolder{
         CardView cv;
         ImageView image;
         TextView title;
@@ -60,7 +60,6 @@ public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHo
     public void onBindViewHolder(final NewsRvAdapter.NewsViewHolder holder, final int position) {
         //新建线程加载图片信息，发送到消息队列中
         new Thread(new Runnable() {
-
             @Override
             public void run() {
                 // TODO Auto-generated method stub
