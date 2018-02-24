@@ -9,7 +9,6 @@
         android:orientation="vertical"
         android:background="#ddd"
         android:padding="20dp">
-
         <TextView
             android:id="@+id/btn_camera"
             android:layout_width="fill_parent"
