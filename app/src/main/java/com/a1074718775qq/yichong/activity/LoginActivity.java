@@ -20,11 +20,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
+import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
 import com.a1074718775qq.yichong.utils.AMUtils;
 import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mob.MobSDK;
+import com.youth.xframe.cache.XCache;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -38,12 +41,13 @@ import static com.youth.xframe.XFrame.tag;
 
 public class LoginActivity extends AppCompatActivity {
 Context mContext=LoginActivity.this;
-private EditText phoneNumber;
-private EditText verification;
-private Button delete;
-private Button getverification;
+private EditText phoneNumber,verification;
+private Button delete,getverification;
+    //网络工具
+NetworkUtil network;
+MyDatebaseHelper sql;
 private static String country="86";
-private int countSeconds = 60;//倒计时秒数
+private int countSeconds = 60;//倒计时e秒数
     @SuppressLint("HandlerLeak")
 private Handler mCountHandler = new Handler() {
         @SuppressLint("SetTextI18n")
@@ -133,48 +137,61 @@ CircularProgressButton loginButton;
                 String verifyCode = verification.getText().toString().trim();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     loginButton.startAnimation();
-                if (null != verifyCode && verifyCode.length() == 4) {
-                    Log.d(tag, verification.getText().toString());
-                    // 注册一个事件回调，用于处理提交验证码操作的结果
-                    SMSSDK.registerEventHandler(new EventHandler() {
-                        public void afterEvent(int event, int result, Object data) {
-                            if(result==SMSSDK.RESULT_COMPLETE) {
-                                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                                    // TODO 处理验证成功的结果
-                                    try {
-                                        addDataToMysql(phoneNumber.getText().toString().trim(), System.currentTimeMillis());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    Intent intent = new Intent(mContext, MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    // TODO 处理错误的结果
-                                    try {
+                //在登录的时候判断是否有网络连接
+                network=new NetworkUtil();
+                //如果有网则请求服务器加载
+                if(network.isNetworkAvailable(mContext))
+                {
+                    try {
+                        if (null != verifyCode && verifyCode.length() == 4) {
+                            Log.d(tag, verification.getText().toString());
+                            // 注册一个事件回调，用于处理提交验证码操作的结果
+                            SMSSDK.registerEventHandler(new EventHandler() {
+                                public void afterEvent(int event, int result, Object data) {
+                                    if(result==SMSSDK.RESULT_COMPLETE) {
+                                        if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                                            // TODO 处理验证成功的结果
+                                            try {
+                                                addDataToMysql(phoneNumber.getText().toString().trim(), System.currentTimeMillis());
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            Intent intent = new Intent(mContext, MainActivity.class);
+                                            startActivity(intent);
+                                        } else {
+                                            // TODO 处理错误的结果
+                                            try {
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            Message msg = myHandler.obtainMessage(0x00);//接收到验证码但是验证失败的情况
+                                            msg.arg1 = event;
+                                            msg.arg2 = result;
+                                            msg.obj = data;
+                                            myHandler.sendMessage(msg);
+                                        }
                                     }
-                                    Message msg = myHandler.obtainMessage(0x00);//接收到验证码但是验证失败的情况
-                                    msg.arg1 = event;
-                                    msg.arg2 = result;
-                                    msg.obj = data;
-                                    myHandler.sendMessage(msg);
                                 }
-                            }
+                            });
+                            // 触发操作
+                            SMSSDK.submitVerificationCode(country, mobile, verifyCode);
                         }
-                    });
-                    // 触发操作
-                    SMSSDK.submitVerificationCode(country, mobile, verifyCode);
+                        else {
+                            loginButton.revertAnimation();
+                            Toast.makeText(mContext, "密码长度不正确", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                else {
+                else
+                {
                     loginButton.revertAnimation();
-                    Toast.makeText(mContext, "密码长度不正确", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"请检查网络连接",Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-
         //获取验证码按钮事件
         getverification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,17 +219,64 @@ CircularProgressButton loginButton;
        final String json = JSON.toJSONString(map,true);
         HttpUtils.doPostAsy(getString(R.string.LoginInterface), json, new HttpUtils.CallBack() {
             public void onRequestComplete(final String result) {
-                Log.e("返回结果",result);
                 JSONObject jsonObject = JSON.parseObject(result.trim());
                 final String userId = jsonObject.getString("user_id");
-                Log.e("返回结果",userId);
                 addDataToLocal(userId,phoneNumber,logTime + (long)30 * 24 * 60 * 60 * 1000);
             }
         });
     }
+//每次登录的时候都会从网络上或获取信息来写到本地sqlite
+    private void getUserInfo(final String userId) {
+        if(network.isNetworkAvailable(mContext))
+        {
+            try {
+//                创建新的线程来获取网络数据
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //创建一个Map对象
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("user_id",userId);
+                        final String json=JSON.toJSONString(map,true);
+                        try {
+                            HttpUtils.doPostAsy(getString(R.string.userInfoInterface), json, new HttpUtils.CallBack() {
+                                public void onRequestComplete(final String result) {
+                                    JSONObject jsonObject = JSON.parseObject(result.trim());
+                                    Map<String,String> map = new HashMap<>();
+                                    map.put("user_id",jsonObject.getString("user_id"));
+                                    map.put("user_icon",jsonObject.getString("user_icon"));
+                                    map.put("user_name",jsonObject.getString("user_name"));
+                                    map.put("user_phone",jsonObject.getString("user_phone"));
+                                    map.put("user_city",jsonObject.getString("user_city"));
+                                    map.put("user_love_pet",jsonObject.getString("user_love_pet"));
+                                    map.put("user_feed_year",jsonObject.getString("user_feed_year"));
+                                    map.put("user_icon_time",jsonObject.getString("user_icon_time"));
+                                    sql=new MyDatebaseHelper(mContext,"userInfo.db", 1);
+                                    sql.insertIntoSqlite(sql,mContext,map);
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            Toast.makeText(mContext,"请检查网络连接",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     //将信息写入本地，在每次打开软件的时候可通过获取来判断是否登录，以及是否需要重新验证
     private void addDataToLocal(String userId, String phoneNumber, long logTime)
     {
+        // 打开软件的时候会向服务器获取用户信息，如果没有头像，则为新用户，给他默认的头像等信息，否则将获取的信息保存在sqlite
+        getUserInfo(userId);
         SharedPreferences sp = mContext.getSharedPreferences("userData", MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp.edit();
         editor.putString("phoneNumber", phoneNumber);
@@ -224,7 +288,6 @@ CircularProgressButton loginButton;
     private void getMobiile(String mobile) {
         if ("".equals(mobile)) {
             //如果手机号为空
-            Log.e("tag", "mobile=" + mobile);
             new AlertDialog.Builder(mContext).setTitle("提示").setMessage("手机号码不能为空").setCancelable(true).show();
         }
         else if (!AMUtils.isMobile(mobile)) {
@@ -232,8 +295,6 @@ CircularProgressButton loginButton;
             new AlertDialog.Builder(mContext).setTitle("提示").setMessage("请输入正确的手机号码").setCancelable(true).show();
         }
         else {
-            //输入了正确的电话号码，自定义方法请求验证码
-            Log.e("tag", "输入了正确的手机号");
             startCountBack();
             getverification.setClickable(false);
             requestVerifyCode(mobile);
@@ -247,7 +308,6 @@ CircularProgressButton loginButton;
                 if (result == SMSSDK.RESULT_COMPLETE) {
                     // TODO 处理成功得到验证码的结果
                     // 请注意，此时只是完成了发送验证码的请求，验证码短信还需要几秒钟之后才送达
-
                 } else{
                     // TODO 处理错误的结果
                     Message msg=myHandler.obtainMessage(0x01);//发出了验证码的请求，但是没有成功收到验证码
@@ -255,7 +315,6 @@ CircularProgressButton loginButton;
                     msg.arg2 = result;
                     msg.obj = data;
                     myHandler.sendMessage(msg);
-
                 }
             }
         });
@@ -284,6 +343,9 @@ CircularProgressButton loginButton;
         super.onDestroy();
         //用完回调要注销掉，否则可能会出现内存泄露
         SMSSDK.unregisterAllEventHandler();
+        if (sql != null) {
+            sql.close();
+        }
     };
 }
 

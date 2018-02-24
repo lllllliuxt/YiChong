@@ -1,7 +1,10 @@
 package com.a1074718775qq.yichong.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Looper;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,6 +30,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -33,19 +38,26 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.Toast;
 
+import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.PostToOss;
 import com.a1074718775qq.yichong.widget.MyDialog;
 import com.a1074718775qq.yichong.widget.MyGridView;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 
 public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,MyDialog.OnButtonClickListener {
     private Context mContext=AdoptPetActivity.this;
     private Button returnButton;
+    private Button upload;
+    private EditText edittext;
     private MyDialog dialog;// 图片选择对话框
     public static final int NONE = 0;
     public static final int PHOTOHRAPH = 1;// 拍照
@@ -61,6 +73,15 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     //照相机的相关变量
     private  Uri contentUri;
     private File file;
+    //    用户id
+    private int user_id;
+    //    萌宠秀内容
+    private String petContext;
+    //    发布时间
+    private long currentTime;
+
+    private  ArrayList<Bitmap> bit=new ArrayList<>();//保存bitmap
+    PostToOss up=new PostToOss(mContext);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,10 +115,80 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
                 finish();
             }
         });
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!edittext.getText().toString().equals("")&& simpleAdapter.getCount()>=1)
+                {
+                    final ProgressDialog progress = new ProgressDialog(mContext);
+                    progress.setMessage("正在发布...");
+                    progress.setCanceledOnTouchOutside(false);
+                    progress.show();
+//                  获取用户id
+                    SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
+                    String userId=sp.getString("userId",null);
+                    user_id = Integer.parseInt(userId);
+//                  获取寻宠发布的内容
+                    petContext = edittext.getText().toString();
+//                获取当前时间
+                    currentTime = System.currentTimeMillis();
+                    //               获取适配器所包含的所有图片数量
+                    int count = bit.size();
+                    up.initOss();
+                    for (int i = 0; i <count; i++) {
+                        up.upload("adopt_pet/"+user_id+"/img"+"_"+currentTime+"_"+i+ ".bmp",bit.get(i));
+                    }
+                    //创建一个Map对象
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("adopt_photo",count);
+                    map.put("adopt_context", petContext);
+                    map.put("adopt_time", currentTime);
+                    map.put("user_id", user_id);
+                    //转成JSON数据
+                    final String json = JSON.toJSONString(map, true);
+                    Log.e("json",json);
+                    try {
+                        HttpUtils.doPostAsy(getString(R.string.adoptInterface), json, new HttpUtils.CallBack() {
+                            public void onRequestComplete(final String result) {
+                                Log.e("返回结果", result);
+                                JSONObject jsonObject = JSON.parseObject(result.trim());
+                                final String psresult = jsonObject.getString("result");
+                                if (psresult.equals("上传成功")) {
+                                    if (progress.isShowing())
+                                        progress.dismiss();
+                                    //解决在子线程中调用Toast的异常情况处理
+                                    Looper.prepare();
+                                    Toast.makeText(mContext, "上传成功", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    Looper.loop();
+                                } else {
+                                    if (progress.isShowing())
+                                        progress.dismiss();
+                                    Looper.prepare();
+                                    Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        if (progress.isShowing())
+                            progress.dismiss();
+                        Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(mContext,"请输入内容和图片",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void findView() {
         returnButton=findViewById(R.id.abopt_pet_return_button);
+        upload=findViewById(R.id.adopt_pet_upload);
+        edittext=findViewById(R.id.adopt_pet_text);
     }
 
     private void init() {
@@ -181,6 +272,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
                 Bitmap photo = extras.getParcelable("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);// (0-100)压缩文件
+                bit.add(photo);
                 // 将图片放入gridview中
                 HashMap<String, Object> map = new HashMap<String, Object>();
                 map.put("itemImage", photo);

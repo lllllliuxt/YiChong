@@ -8,9 +8,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:clipToPadding="true"
-        android:minHeight="?android:attr/actionBarSize"
         android:background="#f2f2f2"
         android:orientation="vertical">
         <android.support.v7.widget.Toolbar
@@ -53,8 +50,8 @@
             android:id="@+id/user_icon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/photo1"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             app:civ_border_width="3dp"
             app:civ_border_color="#666"/>
             <LinearLayout
@@ -62,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="40dp">
                  <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,26 +69,7 @@
                     android:id="@+id/user_nick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:text="lllllliuxt"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="20dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:text="等级："/>
-                <TextView
-                    android:id="@+id/user_rank"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:text="lv1"/>
+                    android:textColor="#000" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -108,8 +86,7 @@
                     android:id="@+id/user_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:text="天津"/>
+                    android:textColor="#000" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -126,8 +103,7 @@
                     android:id="@+id/user_pet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:text="狗"/>
+                    android:textColor="#000" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -178,6 +154,13 @@
                 android:layout_gravity="center_vertical"
                 android:src="@mipmap/goto_button"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:background="#fff">
         <Button
             android:id="@+id/exit"
             android:layout_width="260dp"
@@ -185,9 +168,9 @@
             android:textColor="#fff"
             android:text="退出登录"
             android:textSize="18sp"
-            android:layout_marginTop="30dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:background="#1d89d6"/>
+        </LinearLayout>
     </LinearLayout>
     </ScrollView>
     </LinearLayout>

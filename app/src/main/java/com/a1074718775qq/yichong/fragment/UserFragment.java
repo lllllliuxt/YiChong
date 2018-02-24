@@ -1,20 +1,25 @@
 package com.a1074718775qq.yichong.fragment;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AboutUsActivity;
@@ -22,9 +27,14 @@ import com.a1074718775qq.yichong.activity.AdviceActivity;
 import com.a1074718775qq.yichong.activity.LoginActivity;
 import com.a1074718775qq.yichong.activity.StartActivity;
 import com.a1074718775qq.yichong.activity.UserInfoActivity;
+import com.a1074718775qq.yichong.bean.UserInfo;
+import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
+
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -38,9 +48,19 @@ public class UserFragment extends Fragment {
     Context mContext=getActivity();
     View view;
     private Button edit_info;
-    private Button user_advice;
-    private Button user_aboutus;
     private Button exit;
+//    用户昵称
+    private TextView user_nick;
+//    用户城市
+    private TextView user_city;
+//    用户喜爱的宠物
+    private TextView user_pet;
+//    用户的头像
+    private CircleImageView user_icon;
+
+    //sqlite数据库
+    private MyDatebaseHelper db;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -87,17 +107,25 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       view=inflater.inflate( R.layout.fragment_user, container, false);
-        //浸入式状态栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
+       view = inflater.inflate(R.layout.fragment_user, container, false);
        findView();
        onClick();
+       initinfo();
        return view;
     }
-
+//初始化我的界面的用户信息，从sqllite里面找信息
+    private void initinfo() {
+        //  获取用户id
+        SharedPreferences sp = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
+        String userId=sp.getString("userId",null);
+        db = new MyDatebaseHelper(getActivity(), "userInfo.db", 1);
+//        查询用户的头像，用户的昵称，用户的城市，用户的宠物
+        UserInfo user=db.getUserFragment(db,getActivity(),userId);
+        user_nick.setText(user.getUser_name());
+        user_city.setText(user.getUser_city());
+        user_pet.setText(user.getUser_love_pet());
+        user_icon.setImageBitmap(user.getUser_icon());
+    }
     private void onClick() {
         edit_info.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +157,6 @@ public class UserFragment extends Fragment {
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
                             }
                         })
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -155,8 +182,12 @@ public class UserFragment extends Fragment {
         advice=(LinearLayout)view.findViewById(R.id.user_advice);
         aboutUs=(LinearLayout)view.findViewById(R.id.user_aboutus);
         exit=view.findViewById(R.id.exit);
-    }
 
+        user_icon=view.findViewById(R.id.user_icon);
+        user_nick=view.findViewById(R.id.user_nick);
+        user_city=view.findViewById(R.id.user_city);
+        user_pet=view.findViewById(R.id.user_pet);
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -179,9 +210,29 @@ public class UserFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        if (db != null) {
+            db.close();
+        }
         mListener = null;
     }
-
+//当更改完信息返回刷新界面
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.CART_BROADCAST");
+        BroadcastReceiver mItemViewListClickReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                String msg = intent.getStringExtra("data");
+                if("refresh".equals(msg)){
+                    initinfo();
+                }
+            }
+        };
+        broadcastManager.registerReceiver(mItemViewListClickReceiver, intentFilter);
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

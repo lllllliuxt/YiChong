@@ -109,11 +109,6 @@ WelfareRvAdapter adapter;
         view = inflater.inflate(R.layout.fragment_welfare, container, false);
         findView();
         onClick();
-        //浸入式状态栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         welfareFull=new ArrayList<>();
         //设置是否可以上拉刷新
         refreshview.setPullLoadEnable(true);
@@ -146,11 +141,8 @@ WelfareRvAdapter adapter;
         try {
             HttpUtils.doPostAsy(getString(R.string.WelfareInterface), json, new HttpUtils.CallBack() {
                 public void onRequestComplete(final String result) {
-                    //打印结果
-                    Log.e("返回结果", result);
                     List<WelfareProject>  welfare = JSON.parseArray(result.trim(), WelfareProject.class);
                     welfareFull.addAll(welfare);
-                    Log.e("welfare", "welfare::" + welfare);
                     if (welfare.size() != 0) {
                         //判断是不是初始化，如果是，则初始化
                         if (welfare_id == 0) {

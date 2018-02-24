@@ -1,26 +1,29 @@
 package com.a1074718775qq.yichong.bean;
 
+import android.graphics.Bitmap;
+
 /**
  * create by 刘晓童
  * on 2018/2/2 0002
  */
 public class UserInfo {
     private int user_id;
-    private int user_icon;
+    private Bitmap user_icon;
     private String user_name;
     private String user_phone;
     private String user_city;
     private String user_love_pet;
-    private int user_feed_year;
+    private String user_feed_year;
     private String user_log_time;
     private String user_qq;
     private String user_wx;
     private String user_wb;
+    private long user_icon_time;
     public UserInfo()
     {
 
     }
-    public UserInfo( int user_id,int user_icon,String user_name,String user_phone,String user_city,String user_love_pet,int user_feed_year,String user_log_time,String user_qq, String user_wx,String user_wb)
+    public UserInfo( int user_id,Bitmap user_icon,String user_name,String user_phone,String user_city,String user_love_pet,String user_feed_year,String user_log_time,String user_qq, String user_wx,String user_wb)
     {
         this.user_id=user_id;
         this.user_icon=user_icon;
@@ -39,11 +42,11 @@ public class UserInfo {
         return user_id;
     }
 
-    public int getUser_feed_year() {
+    public String getUser_feed_year() {
         return user_feed_year;
     }
 
-    public int getUser_icon() {
+    public Bitmap getUser_icon() {
         return user_icon;
     }
 
@@ -87,11 +90,11 @@ public class UserInfo {
         this.user_city = user_city;
     }
 
-    public void setUser_feed_year(int user_feed_year) {
+    public void setUser_feed_year(String user_feed_year) {
         this.user_feed_year = user_feed_year;
     }
 
-    public void setUser_icon(int user_icon) {
+    public void setUser_icon(Bitmap user_icon) {
         this.user_icon = user_icon;
     }
 
@@ -122,9 +125,17 @@ public class UserInfo {
     public void setUser_wx(String user_wx) {
         this.user_wx = user_wx;
     }
+    public long getUser_icon_time() {
+        return user_icon_time;
+    }
 
+    public void setUser_icon_time(long user_icon_time) {
+        this.user_icon_time = user_icon_time;
+    }
     @Override
     public String toString() {
         return "UserInfo[user_id=" + user_id + ", user_icon=" + user_icon +",user_name="+user_name +",user_phone="+user_phone+",user_city="+user_city+",user_love_pet="+user_love_pet+",user_feed_year="+user_feed_year+",user_log_time="+user_log_time+",user_qq="+user_qq+",user_wx="+user_wx+",user_wb="+user_wb+"]";
     }
+
+
 }

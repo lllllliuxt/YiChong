@@ -18,4 +18,10 @@
     <string name="LoginInterface">http://112.74.188.94:8080/pet/login.jsp</string>
     <string name="NewsInterface">http://112.74.188.94:8080/pet/News.jsp</string>
     <string name="WelfareInterface">http://112.74.188.94:8080/pet/Welfare.jsp</string>
+    <string name="PetShowInterface">http://112.74.188.94:8080/pet/PetShow.jsp</string>
+    <string name="adoptInterface">http://112.74.188.94:8080/pet/AdoptPet.jsp</string>
+    <string name="findpetInterface">http://112.74.188.94:8080/pet/FindPet.jsp</string>
+    <string name="adviceInterface">http://112.74.188.94:8080/pet/Advice.jsp</string>
+    <string name="userInfoInterface">http://112.74.188.94:8080/pet/UserInfo.jsp</string>
+    <string name="UpuserInfoInterface">http://112.74.188.94:8080/pet/UpUserInfo.jsp</string>
 </resources>

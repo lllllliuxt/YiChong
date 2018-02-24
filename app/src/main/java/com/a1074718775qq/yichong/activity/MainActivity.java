@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         fManager=getSupportFragmentManager();
         //防止程序长时间后台导致fragment重叠。
-
         findView();
         onClick();
         main_home.performClick();//模拟第一次点击

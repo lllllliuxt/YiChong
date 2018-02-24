@@ -41,6 +41,7 @@
                 android:orientation="vertical"
                 android:layout_margin="5dp">
                 <EditText
+                    android:id="@+id/pet_show_editview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="向大家介绍你的萌宠吧…"

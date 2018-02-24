@@ -119,11 +119,6 @@ public class HomeFragment extends Fragment{
         onClick();
         //设置是否可以上拉刷新
         refreshview.setPullLoadEnable(true);
-        //浸入式状态栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         initBanner();
         //请求服务器加载新闻
         network=new NetworkUtil();
@@ -161,7 +156,7 @@ public class HomeFragment extends Fragment{
                         refreshview.stopRefresh();
                         long lastRefreshTime = refreshview.getLastRefreshTime();
                     }
-                }, 2000);
+                }, 5000);
             }
 
             //上拉加载事件，每次加载五条新闻
@@ -227,11 +222,8 @@ public class HomeFragment extends Fragment{
         try {
             HttpUtils.doPostAsy(getString(R.string.NewsInterface), json, new HttpUtils.CallBack() {
                 public void onRequestComplete(final String result) {
-                    //打印结果
-                    Log.e("返回结果", result);
                     List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
                     fullnews.addAll(news);
-                    Log.e("news", "news::" + fullnews);
                     if (news.size() != 0) {
                         //判断是不是初始化，如果是，则初始化
                         if (news_id == 0) {
@@ -274,7 +266,6 @@ public class HomeFragment extends Fragment{
     private void addCardview(List<PetNews> news)
     {
         adapter.addMoreItem(news);
-
         getActivity().runOnUiThread(new Runnable() {
         @Override
         public void run() {

@@ -50,6 +50,7 @@ dependencies {
     compile 'com.alibaba:fastjson:1.2.31'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.amap.api:location:latest.integration'
+    compile 'com.aliyun.dpa:oss-android-sdk:+'
     apply plugin: "com.mob.sdk"
     // 在MobSDK的扩展中注册SMSSDK的相关信息
     MobSDK {

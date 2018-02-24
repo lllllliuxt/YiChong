@@ -7,17 +7,29 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
+import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
+import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.a1074718775qq.yichong.widget.PermissionsChecker;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class StartActivity extends AppCompatActivity {
     Context mContext=StartActivity.this;
-
+    //网络工具
+    NetworkUtil network;
+    MyDatebaseHelper sql;
     private static final int REQUEST_CODE = 0; // 请求码
     // 所需的全部权限
     static final String[] PERMISSIONS = new String[]{
@@ -61,12 +73,11 @@ public class StartActivity extends AppCompatActivity {
 
         });
     }
-
     private void redirectTo(){
         //判断用户是否登录过
-        SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
-       // if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
-        if(false)
+       SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
+       if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
+        //if(false)
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

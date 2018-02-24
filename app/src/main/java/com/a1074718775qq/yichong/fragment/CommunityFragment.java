@@ -95,11 +95,6 @@ public class CommunityFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view=inflater.inflate(R.layout.fragment_community, container, false);
-        //浸入式状态栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //透明状态栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); //透明导航栏
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         findView();
         onClick();
         //初始化轮播图
@@ -140,7 +135,7 @@ public class CommunityFragment extends Fragment {
             }
         });
         //设置时间
-        mMZBanner.setDuration(2000);
+        mMZBanner.setDuration(4000);
     }
 
     public void onPause() {
