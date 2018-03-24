@@ -2,15 +2,21 @@ package com.a1074718775qq.yichong.activity;
 
 
 
+import android.annotation.SuppressLint;
+import android.app.Application;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.fragment.CommunityFragment;
@@ -30,15 +36,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CommunityFragment fragment3;
     private UserFragment fragment4;
     private FragmentManager fManager;
+    // 定义一个变量，来标识是否退出
+    private static boolean isExit = false;
+
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            isExit = false;
+        }
+    };
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fManager=getSupportFragmentManager();
         //防止程序长时间后台导致fragment重叠。
-
+        if (savedInstanceState != null) {
+            fManager = getSupportFragmentManager();//重新创建Manager，防止此对象为空
+            fManager.popBackStackImmediate(null, 1);//弹出所有fragment
+        }
         findView();
         onClick();
         main_home.performClick();//模拟第一次点击
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void exit() {
+        if (!isExit) {
+            isExit = true;
+            Toast.makeText(getApplicationContext(), "再按一次退出程序",
+                    Toast.LENGTH_SHORT).show();
+            // 利用handler延迟发送更改状态信息
+            mHandler.sendEmptyMessageDelayed(0, 2000);
+        } else {
+            finish();
+            System.exit(0);
+        }
     }
 
     private void onClick() {
