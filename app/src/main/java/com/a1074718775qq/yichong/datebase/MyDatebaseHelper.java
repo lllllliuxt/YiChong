@@ -60,7 +60,7 @@ public class MyDatebaseHelper extends SQLiteOpenHelper {
                 db.getReadableDatabase().execSQL("update userInfo set icon=?,usernick=?,city=?,lovepet=?,feedyear=?,icontime=? where id=?",new Object[]{iconByte,map.get("user_name"),map.get("user_city"),map.get("user_love_pet"),map.get("user_feed_year"),map.get("user_icon_time"),map.get("user_id")});
             }
             else {
-                db.getReadableDatabase().execSQL("insert into userInfo values(?,?,?,?,?,?,?,?)", new Object[]{map.get("user_id"), iconByte, map.get("user_name"), map.get("user_phone"), map.get("user_city"), map.get("user_love_pet"), map.get("user_feed_year"), System.currentTimeMillis()});
+                db.getReadableDatabase().execSQL("insert into userInfo values(?,?,?,?,?,?,?,?)", new Object[]{map.get("user_id"), iconByte, map.get("user_name"), map.get("user_phone"), map.get("user_city"), map.get("user_love_pet"), map.get("user_feed_year"),map.get("user_icon_time")});
             }
             cursor.close();
         }
@@ -101,5 +101,17 @@ public class MyDatebaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return user;
+    }
+
+    public String getUserIconInfo(MyDatebaseHelper db,Context context,String userid)
+    {
+        String IconTime=null;
+        Cursor cursor=db.getReadableDatabase().rawQuery("select * from userInfo where id="+userid,null);
+        while(cursor.moveToNext())
+        {
+         IconTime=cursor.getString(7);
+        }
+        cursor.close();
+        return IconTime;
     }
 }

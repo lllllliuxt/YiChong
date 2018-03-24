@@ -5,6 +5,7 @@ package com.a1074718775qq.yichong.bean;
  * on 2018/2/1 0001
  */
 public class PetShow {
+
     int image;
     String nick;
     String comment;

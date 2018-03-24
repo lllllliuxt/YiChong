@@ -3,6 +3,7 @@ package com.a1074718775qq.yichong.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -12,6 +13,7 @@ import android.view.autofill.AutofillValue;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.a1074718775qq.yichong.R;
@@ -55,8 +57,13 @@ public class NewsWebActivity extends AppCompatActivity {
         //其他细节操作
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
         webSettings.setAllowFileAccess(true); //设置可以访问文件
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(false); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
+        webSettings.setBlockNetworkImage(false);//解决图片不显示
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
         String cacheDirPath = mContext.getFilesDir().getAbsolutePath()+"cache/";
         //手势缩放
@@ -70,6 +77,13 @@ public class NewsWebActivity extends AppCompatActivity {
         // 2. 设置缓存大小
         webSettings.setAppCacheEnabled(true);
         // 3. 开启Application Cache存储机制
+
+
+        wb.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
         wb.loadUrl(url);
     }
 

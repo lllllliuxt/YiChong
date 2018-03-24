@@ -156,7 +156,7 @@ public class HomeFragment extends Fragment{
                         refreshview.stopRefresh();
                         long lastRefreshTime = refreshview.getLastRefreshTime();
                     }
-                }, 5000);
+                }, 3000);
             }
 
             //上拉加载事件，每次加载五条新闻
@@ -193,8 +193,6 @@ public class HomeFragment extends Fragment{
 
             }
         });
-
-
         //每条新闻的点击事件
         rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -265,13 +263,15 @@ public class HomeFragment extends Fragment{
     //往cardview里加值
     private void addCardview(List<PetNews> news)
     {
-        adapter.addMoreItem(news);
-        getActivity().runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-            adapter.notifyDataSetChanged();
+        if(news != null) {
+            adapter.addMoreItem(news);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
-    });
     }
 
     //初始化轮播图

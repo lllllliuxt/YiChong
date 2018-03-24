@@ -3,48 +3,54 @@ package com.a1074718775qq.yichong.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.PetShowActivity;
-import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.adapter.PetShowRvAdapter;
+import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.bean.PetShow;
+import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
+import com.alibaba.fastjson.JSON;
+import com.andview.refreshview.XRefreshView;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CommunityFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CommunityFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CommunityFragment extends Fragment {
     Context mContext=getActivity();
     private List<PetShow> petShows;//对象列表
+    //对象列表
+    private ArrayList<PetShow> fullShow=new ArrayList<>();
     View view;
     Button writePetShow;
     MZBannerView mMZBanner;
+    private XRefreshView refreshview;
     //对萌宠秀初始化
     RecyclerView rv;
+    PetShowRvAdapter adapter;
     PetShow petShow;
+    //网络工具
+    NetworkUtil network;
+    //萌宠秀id
+    private static int show_id=0;
     int photo[];
     //加入轮播图的图片，后期会用网络加入
     int RES[]={R.drawable.photo1,R.drawable.photo2,R.drawable.photo3};
@@ -63,14 +69,6 @@ public class CommunityFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CommunityFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static CommunityFragment newInstance(String param1, String param2) {
         CommunityFragment fragment = new CommunityFragment();
@@ -97,32 +95,78 @@ public class CommunityFragment extends Fragment {
         view=inflater.inflate(R.layout.fragment_community, container, false);
         findView();
         onClick();
+        //设置是否可以上拉刷新
+        refreshview.setPullLoadEnable(true);
         //初始化轮播图
         initBanner();
-        //初始化卡片布局
-        initCardview();
+        //如果有网则请求服务器加载
+        if(network.isNetworkAvailable(getActivity()))
+        {
+            try {
+                //requestFromsql();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+            refreshview.stopLoadMore();
+        }
         return view;
     }
+//从数据库中加载信息
+    private void requestFromsql() {
+        //创建一个Map对象
+        Map<String, Integer> map = new HashMap<>();
+        map.put("pet_show_id", show_id);
+        //转成JSON数据
+        final String json = JSON.toJSONString(map, true);
+        try {
+            HttpUtils.doPostAsy(getString(R.string.GetPetShowInterface), json, new HttpUtils.CallBack() {
+                public void onRequestComplete(final String result) {
+                    List<PetShow> show = JSON.parseArray(result.trim(), PetShow.class);
+                    fullShow.addAll(show);
+                    if (show.size() != 0) {
+                        //判断是不是初始化，如果是，则初始化
+                        if (show_id == 0) {
+                            initCardview(show);
+                            show_id = show_id + show.size();
+                        } else {
+                            //如果不是则在rv里面继续增加
+                            addCardview(show);
+                            show_id = show_id + show.size();
+                        }
+                    } else {
+                        refreshview.setHideFooterWhenComplete(true);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
+        }
+    }
 
-    private void initCardview() {
-        //初始化cardview的数据
-        initializeData();
+    private void addCardview(List<PetShow> show) {
+
+    }
+
+    private void initCardview(final List<PetShow> show) {
         //添加布局管理器
-        rv.setLayoutManager(new LinearLayoutManager(getActivity(), VERTICAL, false));
-        rv.setNestedScrollingEnabled(false);//禁止滑动
-        //添加适配器
-        PetShowRvAdapter adapter=new PetShowRvAdapter(petShows,mContext);
-        rv.setAdapter(adapter);
+        final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rv.setLayoutManager(lm);
+                rv.setNestedScrollingEnabled(false);//禁止滑动
+                //添加适配器
+                adapter = new PetShowRvAdapter(show,mContext);
+                rv.setAdapter(adapter);
+            }
+        });
     }
-
-    private void initializeData() {
-        photo= new int[]{R.drawable.photo1, R.drawable.photo2, R.drawable.photo3};
-        petShows=new ArrayList<>();
-        petShows.add(new PetShow(R.drawable.photo1,"lllllliuxt","今天天气真不错啊，真不错",photo));
-        petShows.add(new PetShow(R.drawable.photo1,"lllllliuxt","今天天气真不错啊，真不错",photo));
-        petShows.add(new PetShow(R.drawable.photo1,"lllllliuxt","今天天气真不错啊，真不错",photo));
-    }
-
     private void initBanner() {
         List<Integer> list = new ArrayList<>();
         for(int i=0;i<RES.length;i++){
@@ -157,12 +201,69 @@ public class CommunityFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+//        刷新监听
+        refreshview.setXRefreshViewListener(new XRefreshView.XRefreshViewListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+
+            @Override
+            public void onRefresh(boolean isPullDown) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshview.stopRefresh();
+                        long lastRefreshTime = refreshview.getLastRefreshTime();
+                    }
+                }, 3000);
+            }
+            //上拉加载事件，每次加载五条萌宠秀
+            @Override
+            public void onLoadMore(boolean isSilence) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(network.isNetworkAvailable(getActivity()))
+                        {
+                            try {
+                                requestFromsql();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else
+                        {
+                            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+                        }
+                        refreshview.stopLoadMore();
+
+                    }
+                }, 2000);
+                  }
+
+            @Override
+            public void onRelease(float direction) {
+
+            }
+
+            @Override
+            public void onHeaderMove(double headerMovePercent, int offsetY) {
+
+            }
+        });
     }
     private void findView() {
         mMZBanner = view.findViewById(R.id.community_banner);
         writePetShow=view.findViewById(R.id.write_pet_show);
         rv=view.findViewById(R.id.pet_show_list);
+        refreshview=view.findViewById(R.id.refreshview);
     }
+
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

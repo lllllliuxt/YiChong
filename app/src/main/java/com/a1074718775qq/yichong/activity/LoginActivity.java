@@ -225,52 +225,6 @@ CircularProgressButton loginButton;
             }
         });
     }
-//每次登录的时候都会从网络上或获取信息来写到本地sqlite
-    private void getUserInfo(final String userId) {
-        if(network.isNetworkAvailable(mContext))
-        {
-            try {
-//                创建新的线程来获取网络数据
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //创建一个Map对象
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("user_id",userId);
-                        final String json=JSON.toJSONString(map,true);
-                        try {
-                            HttpUtils.doPostAsy(getString(R.string.userInfoInterface), json, new HttpUtils.CallBack() {
-                                public void onRequestComplete(final String result) {
-                                    JSONObject jsonObject = JSON.parseObject(result.trim());
-                                    Map<String,String> map = new HashMap<>();
-                                    map.put("user_id",jsonObject.getString("user_id"));
-                                    map.put("user_icon",jsonObject.getString("user_icon"));
-                                    map.put("user_name",jsonObject.getString("user_name"));
-                                    map.put("user_phone",jsonObject.getString("user_phone"));
-                                    map.put("user_city",jsonObject.getString("user_city"));
-                                    map.put("user_love_pet",jsonObject.getString("user_love_pet"));
-                                    map.put("user_feed_year",jsonObject.getString("user_feed_year"));
-                                    map.put("user_icon_time",jsonObject.getString("user_icon_time"));
-                                    sql=new MyDatebaseHelper(mContext,"userInfo.db", 1);
-                                    sql.insertIntoSqlite(sql,mContext,map);
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            Toast.makeText(mContext,"请检查网络连接",Toast.LENGTH_SHORT).show();
-        }
-    }
 
     //将信息写入本地，在每次打开软件的时候可通过获取来判断是否登录，以及是否需要重新验证
     private void addDataToLocal(String userId, String phoneNumber, long logTime)
@@ -284,6 +238,49 @@ CircularProgressButton loginButton;
         editor.putLong("deadline", logTime);
         editor.apply();
     }
+
+    //每次登录的时候都会从网络上或获取信息来写到本地sqlite
+    private void getUserInfo(final String userId) {
+        try {
+//                创建新的线程来获取网络数据
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //创建一个Map对象
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("user_id",userId);
+                    final String json=JSON.toJSONString(map,true);
+                    try {
+                        HttpUtils.doPostAsy(getString(R.string.userInfoInterface), json, new HttpUtils.CallBack() {
+                            public void onRequestComplete(final String result) {
+                                JSONObject jsonObject = JSON.parseObject(result.trim());
+                                Map<String,String> map = new HashMap<>();
+                                map.put("user_id",jsonObject.getString("user_id"));
+                                map.put("user_icon",jsonObject.getString("user_icon"));
+                                map.put("user_name",jsonObject.getString("user_name"));
+                                map.put("user_phone",jsonObject.getString("user_phone"));
+                                map.put("user_city",jsonObject.getString("user_city"));
+                                map.put("user_love_pet",jsonObject.getString("user_love_pet"));
+                                map.put("user_feed_year",jsonObject.getString("user_feed_year"));
+                                map.put("user_icon_time",jsonObject.getString("user_icon_time"));
+                                Log.d("登录界面得到的值",map.toString());
+                                sql=new MyDatebaseHelper(mContext,"userInfo.db", 1);
+                                sql.insertIntoSqlite(sql,mContext,map);
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
     //获取验证码信息，判断是否有手机号码
     private void getMobiile(String mobile) {
         if ("".equals(mobile)) {
@@ -346,6 +343,6 @@ CircularProgressButton loginButton;
         if (sql != null) {
             sql.close();
         }
-    };
+    }
 }
 

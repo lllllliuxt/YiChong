@@ -1,6 +1,8 @@
 package com.a1074718775qq.yichong.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -34,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.widget.SearchView.*;
 
@@ -286,7 +289,6 @@ WelfareRvAdapter adapter;
             mListener.onFragmentInteraction(uri);
         }
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -306,7 +308,7 @@ WelfareRvAdapter adapter;
     // 单击搜索按钮时激发该方法
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(getActivity(), "您的选择是:" + query, Toast.LENGTH_SHORT).show();
+//        如果存在相关救助站
         return false;
     }
     // 用户输入字符时激发该方法
@@ -314,7 +316,7 @@ WelfareRvAdapter adapter;
     public boolean onQueryTextChange(String newText) {
      if (!TextUtils.isEmpty(newText))
         {
-            Toast.makeText(getActivity(),newText, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(),newText, Toast.LENGTH_SHORT).show();
         }
         else
         {

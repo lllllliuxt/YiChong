@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.bean.UserInfo;
 import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
-import com.a1074718775qq.yichong.fragment.UserFragment;
 import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.LocationFromGaode;
 import com.a1074718775qq.yichong.utils.PostToOss;
@@ -111,7 +110,6 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
         //  获取用户id
         SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
         String userId=sp.getString("userId",null);
-         Log.e("123",userId);
         db = new MyDatebaseHelper(mContext, "userInfo.db", 1);
 //        查询用户的头像，用户的昵称，用户的城市，用户的宠物
         UserInfo user=db.getUserFragment(db,mContext,userId);
@@ -209,8 +207,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
                 progress.setMessage("正在上传...");
                 progress.setCanceledOnTouchOutside(false);
                 progress.show();
-//                获取需要上传的信息
-                iconTime= String.valueOf(System.currentTimeMillis());
+                db=new MyDatebaseHelper(mContext,"userInfo.db", 1);
                 //  获取用户id
                 SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
                 userId=sp.getString("userId",null);
@@ -228,10 +225,26 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
 //                如果没有上传头像
                 if (bit.size()==0)
                 {
-                   userIcon="0";
+//                  查询本地数据库中的头像是否为默认的，如果是，则说明用户仍然使用默认头像，否则用户使用的是以前的头像
+//                    通过用户的id来查询出用户的icontime和userIcon的值
+                   if(db.getUserIconInfo(db, mContext, userId).equals("0"))
+                   {
+//                      没有用户头像且用户没有改变默认头像
+                       userIcon="0";
+                       iconTime="0";
+                   }
+                   else
+                   {
+//                       没有用户头像但是用户上传过头像
+                       userIcon="1";
+                       iconTime=db.getUserIconInfo(db,mContext,userId);
+                   }
                 }
                 else
                 {
+//                    更改头像
+//                    获取需要上传的信息
+                    iconTime= String.valueOf(System.currentTimeMillis());
                     userIcon="1";
                     up.initOss();
                     up.upload("user_icon/"+userId+"/"+iconTime+ ".bmp",bit.get(0));
@@ -276,9 +289,8 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
                     Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
-//                将数据写到本地
-                  db=new MyDatebaseHelper(mContext,"userInfo.db", 1);
-                  db.insertIntoSqlite(db,mContext,map);
+//              将数据写到本地
+                db.insertIntoSqlite(db,mContext,map);
                 Intent intent = new Intent("android.intent.action.CART_BROADCAST");
                 intent.putExtra("data","refresh");
                 LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(intent);
@@ -380,5 +392,12 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
     }
     public void cancel() {
 
+    }
+    protected void onDestroy() {
+        super.onDestroy();
+        //用完回调要注销掉，否则可能会出现内存泄露
+        if (db != null) {
+            db.close();
+        }
     }
 }
