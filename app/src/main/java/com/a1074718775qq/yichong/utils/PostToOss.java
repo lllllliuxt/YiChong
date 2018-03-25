@@ -112,6 +112,7 @@ public class PostToOss {
                         }
                         Log.v("下载数据的长度",b.toString());
                         bitmap = bit.bytesIntobitmap(b);
+                        Log.v("bitmap",bitmap.toString());
                         // 下载后可以查看文件元信息
                         ObjectMetadata metadata = getResult.getMetadata();
                         Log.d("查看文件元信息", metadata.getContentType());

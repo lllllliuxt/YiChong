@@ -52,9 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fManager = getSupportFragmentManager();//重新创建Manager，防止此对象为空
         //防止程序长时间后台导致fragment重叠。
         if (savedInstanceState != null) {
-            fManager = getSupportFragmentManager();//重新创建Manager，防止此对象为空
             fManager.popBackStackImmediate(null, 1);//弹出所有fragment
         }
         findView();
