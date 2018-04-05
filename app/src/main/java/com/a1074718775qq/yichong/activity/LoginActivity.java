@@ -85,6 +85,7 @@ private Handler mCountHandler = new Handler() {
 
         }
     };
+
     //圆形头像框
 CircularProgressButton loginButton;
     @Override
@@ -140,10 +141,10 @@ CircularProgressButton loginButton;
                 //在登录的时候判断是否有网络连接
                 network=new NetworkUtil();
                 //如果有网则请求服务器加载
-                if(network.isNetworkAvailable(mContext))
+                if(NetworkUtil.isNetworkAvailable(mContext))
                 {
                     try {
-                        if (null != verifyCode && verifyCode.length() == 4) {
+                        if (verifyCode.length() == 4) {
                             Log.d(tag, verification.getText().toString());
                             // 注册一个事件回调，用于处理提交验证码操作的结果
                             SMSSDK.registerEventHandler(new EventHandler() {
@@ -279,7 +280,6 @@ CircularProgressButton loginButton;
             e.printStackTrace();
         }
     }
-
 
     //获取验证码信息，判断是否有手机号码
     private void getMobiile(String mobile) {

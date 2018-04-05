@@ -77,7 +77,7 @@ public class StartActivity extends AppCompatActivity {
         //判断用户是否登录过
        SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
        if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
-        //if(false)
+       // if(false)
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

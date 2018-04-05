@@ -17,16 +17,17 @@ public class BitmapBytes {
     //将图片插入数据库,传入bitmap值
     public byte[] bitmapIntobytes(Bitmap bm)
     {
-        //Bitmap bm = BitmapFactory.decodeResource(context.getResources(),R.mipmap.text);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] result = baos.toByteArray();
-        return  result;
+        return baos.toByteArray();
     }
     //将图片从数据库中取出
     public Bitmap bytesIntobitmap(byte[] in)
     {
-        Bitmap bmpout = BitmapFactory.decodeByteArray(in, 0, in.length);
-        return bmpout;
+        if (in.length != 0) {
+            return BitmapFactory.decodeByteArray(in, 0, in.length);
+        } else {
+            return null;
+        }
     }
 }

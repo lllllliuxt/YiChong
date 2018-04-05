@@ -106,6 +106,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
         onClick();
         initinfo();
     }
+
     private void initinfo() {
         //  获取用户id
         SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
@@ -139,7 +140,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
         LayoutInflater layout = this.getLayoutInflater();
         View view = layout.inflate(R.layout.select_photo, null);
     }
-
+//按钮监听
     private void onClick() {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,7 +301,21 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
             }
         });
     }
+//    组件绑定
+    private void findView() {
+        addresButton=findViewById(R.id.user_getaddress);
+        returnButton=findViewById(R.id.user_info_return_button);
+        addressText=findViewById(R.id.user_city);
+        icon=findViewById(R.id.user_icon);
+        user_nick=findViewById(R.id.user_nick);
+        user_phone=findViewById(R.id.user_phone);
+        user_pet=findViewById(R.id.user_pet);
+        user_date=findViewById(R.id.user_date);
+        confirmButton=findViewById(R.id.user_commit);
 
+    }
+
+//选择图片的对话框
     protected void showChoosePicDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("设置头像");
@@ -328,6 +343,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
         });
         builder.create().show();
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) { // 如果返回码是可以用的
@@ -346,6 +362,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
             }
         }
     }
+//    将图片显示到头像框
     protected void setImageToView(Intent data) {
         Bundle extras = data.getExtras();
         if (extras != null) {
@@ -354,18 +371,7 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
             bit.add(photo);//将头像的bitmap保存
         }
     }
-    private void findView() {
-        addresButton=findViewById(R.id.user_getaddress);
-        returnButton=findViewById(R.id.user_info_return_button);
-        addressText=findViewById(R.id.user_city);
-        icon=findViewById(R.id.user_icon);
-        user_nick=findViewById(R.id.user_nick);
-        user_phone=findViewById(R.id.user_phone);
-        user_pet=findViewById(R.id.user_pet);
-        user_date=findViewById(R.id.user_date);
-        confirmButton=findViewById(R.id.user_commit);
 
-    }
     public void startPhotoZoom(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
@@ -381,6 +387,8 @@ public class UserInfoActivity extends AppCompatActivity implements AdapterView.O
         intent.putExtra("return-data", true);
         startActivityForResult(intent,CROP_SMALL_PICTURE);
     }
+
+
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         dialog.show();
     }

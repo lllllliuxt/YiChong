@@ -7,8 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,11 +25,15 @@ import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AboutUsActivity;
 import com.a1074718775qq.yichong.activity.AdviceActivity;
 import com.a1074718775qq.yichong.activity.LoginActivity;
-import com.a1074718775qq.yichong.activity.StartActivity;
 import com.a1074718775qq.yichong.activity.UserInfoActivity;
 import com.a1074718775qq.yichong.bean.UserInfo;
 import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
+import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.PostToOss;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -113,6 +117,8 @@ public class UserFragment extends Fragment {
        initinfo();
        return view;
     }
+
+
 //初始化我的界面的用户信息，从sqllite里面找信息
     private void initinfo() {
         //  获取用户id
@@ -120,12 +126,14 @@ public class UserFragment extends Fragment {
         String userId=sp.getString("userId",null);
         db = new MyDatebaseHelper(getActivity(), "userInfo.db", 1);
 //        查询用户的头像，用户的昵称，用户的城市，用户的宠物
-        UserInfo user=db.getUserFragment(db,getActivity(),userId);
+        UserInfo user = db.getUserFragment(db, getActivity(), userId);
         user_nick.setText(user.getUser_name());
         user_city.setText(user.getUser_city());
         user_pet.setText(user.getUser_love_pet());
         user_icon.setImageBitmap(user.getUser_icon());
     }
+
+
     private void onClick() {
         edit_info.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,8 +187,8 @@ public class UserFragment extends Fragment {
     }
     private void findView() {
         edit_info=view.findViewById(R.id.edit_info);
-        advice=(LinearLayout)view.findViewById(R.id.user_advice);
-        aboutUs=(LinearLayout)view.findViewById(R.id.user_aboutus);
+        advice= view.findViewById(R.id.user_advice);
+        aboutUs= view.findViewById(R.id.user_aboutus);
         exit=view.findViewById(R.id.exit);
 
         user_icon=view.findViewById(R.id.user_icon);

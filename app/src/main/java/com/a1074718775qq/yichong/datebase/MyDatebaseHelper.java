@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.bean.UserInfo;
@@ -51,15 +52,15 @@ public class MyDatebaseHelper extends SQLiteOpenHelper {
             if (iconImage!=null&&!iconImage.isRecycled())//回收资源
             {
                 iconImage.recycle();
-                iconImage=null;
             }
             //            判断本地数据库是否有记录，有则更新，否则就插入
             Cursor cursor=db.getWritableDatabase().rawQuery("select id from userInfo where id="+map.get("user_id"),null);
             if(cursor.moveToNext())//当下一行存在值的时候
             {
-                db.getReadableDatabase().execSQL("update userInfo set icon=?,usernick=?,city=?,lovepet=?,feedyear=?,icontime=? where id=?",new Object[]{iconByte,map.get("user_name"),map.get("user_city"),map.get("user_love_pet"),map.get("user_feed_year"),map.get("user_icon_time"),map.get("user_id")});
+                db.getReadableDatabase().execSQL("update userInfo set icon=?,usernick=?,city=?,lovepet=?,feedyear=?,icontime=? where id=?",new Object[]{map.get("user_name"),map.get("user_city"),map.get("user_love_pet"),map.get("user_feed_year"),map.get("user_icon_time"),map.get("user_id")});
             }
             else {
+                Log.d("32","asda"+map.toString());
                 db.getReadableDatabase().execSQL("insert into userInfo values(?,?,?,?,?,?,?,?)", new Object[]{map.get("user_id"), iconByte, map.get("user_name"), map.get("user_phone"), map.get("user_city"), map.get("user_love_pet"), map.get("user_feed_year"),map.get("user_icon_time")});
             }
             cursor.close();
@@ -102,7 +103,7 @@ public class MyDatebaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return user;
     }
-
+//获取用户的头像的上传时间
     public String getUserIconInfo(MyDatebaseHelper db,Context context,String userid)
     {
         String IconTime=null;
