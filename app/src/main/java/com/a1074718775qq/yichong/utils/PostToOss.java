@@ -57,7 +57,8 @@ public class PostToOss {
 
     public void upload(String filename, Bitmap img)
     {
-        byte[] datas = bit.bitmapIntobytes(img);
+        byte[] datas;
+        datas = bit.bitmapIntobytes(img);
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest("ipet-image", filename,datas);
         try {

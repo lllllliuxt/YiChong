@@ -132,7 +132,7 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
                     int count = bit.size();
                     up.initOss();
                     for (int i = 0; i <count; i++) {
-                        up.upload("find_pet/"+user_id+"/img"+"_"+currentTime+"_"+i+ ".bmp",bit.get(i));
+                        up.upload("pet_show/"+user_id+"/img"+"_"+currentTime+"_"+i+ ".bmp",bit.get(i));
                     }
                     //创建一个Map对象
                     Map<String, Object> map = new HashMap<>();
@@ -185,8 +185,11 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
         editText=findViewById(R.id.pet_show_editview);
     }
 
+
+
+
     private void init() {
-        gridView = (MyGridView) findViewById(R.id.pet_show_gridView);
+        gridView = findViewById(R.id.pet_show_gridView);
         gridView.setOnItemClickListener(this);
         dialog = new MyDialog(this);
         dialog.setOnButtonClickListener(this);
@@ -259,7 +262,8 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 80, stream);// (0-100)压缩文件
+                assert photo != null;
+                photo.compress(Bitmap.CompressFormat.JPEG, 90, stream);// (0-100)压缩文件
                 bit.add(photo);
                 // 将图片放入gridview中
                 HashMap<String, Object> map = new HashMap<String, Object>();
@@ -300,6 +304,7 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
         super.onResume();
         if (!TextUtils.isEmpty(pathImage)) {
             Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
+            bit.add(addbmp);
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("itemImage", addbmp);
             imageItem.add(map);
@@ -331,7 +336,6 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         // TODO Auto-generated method stub
         if (imageItem.size() == 10) { // 第一张为默认图片
-
             if (position!=0) {
                 dialog(position);
             }else{
@@ -359,6 +363,7 @@ public class PetShowActivity extends AppCompatActivity implements AdapterView.On
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 imageItem.remove(position);
+                bit.remove(position-1);
                 simpleAdapter.notifyDataSetChanged();
             }
         });

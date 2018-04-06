@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -106,7 +107,7 @@ WelfareRvAdapter adapter;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_welfare, container, false);
@@ -118,7 +119,7 @@ WelfareRvAdapter adapter;
         //请求服务器加载新闻
         network=new NetworkUtil();
         //如果有网则请求服务器加载
-        if(network.isNetworkAvailable(getActivity()))
+        if(NetworkUtil.isNetworkAvailable(getActivity()))
         {
             try {
                 requestFromsql();
@@ -212,9 +213,10 @@ WelfareRvAdapter adapter;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(network.isNetworkAvailable(getActivity()))
+                        if(NetworkUtil.isNetworkAvailable(getActivity()))
                         {
                             try {
+//                                从服务请求消息
                                 requestFromsql();
                                 //写入缓存
                             } catch (Exception e) {
@@ -241,6 +243,8 @@ WelfareRvAdapter adapter;
             }
         });
     }
+
+
 //初始化cardview
     private void initCardview(final List<WelfareProject>  welfare) {
         final LinearLayoutManager lm=new LinearLayoutManager(mContext, VERTICAL, false);
@@ -272,8 +276,8 @@ WelfareRvAdapter adapter;
     private void findView() {
         rv=view.findViewById(R.id.welfare_recyclerview);
         search=view.findViewById(R.id.welfare_search);
-        feedpet=(LinearLayout)view.findViewById(R.id.welfare_feedpet);
-        pethome=(LinearLayout)view.findViewById(R.id.welfare_pethome);
+        feedpet= view.findViewById(R.id.welfare_feedpet);
+        pethome= view.findViewById(R.id.welfare_pethome);
         refreshview=view.findViewById(R.id.refreshview);
     }
 

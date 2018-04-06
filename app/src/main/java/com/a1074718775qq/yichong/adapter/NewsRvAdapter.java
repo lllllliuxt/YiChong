@@ -41,10 +41,10 @@ public class NewsRvAdapter extends RecyclerView.Adapter<NewsRvAdapter.NewsViewHo
 
         NewsViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.news_cardview);
-            image = (ImageView)itemView.findViewById(R.id.news_image);
-            title = (TextView)itemView.findViewById(R.id.news_title);
-            introduction = (TextView)itemView.findViewById(R.id.news_introduction);
+            cv = itemView.findViewById(R.id.news_cardview);
+            image = itemView.findViewById(R.id.news_image);
+            title = itemView.findViewById(R.id.news_title);
+            introduction = itemView.findViewById(R.id.news_introduction);
         }
     }
     @Override

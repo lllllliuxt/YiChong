@@ -25,7 +25,6 @@ public class HttpUtils {
     }
 
     public static void doGetAsy(final String urlStr, final CallBack callBack) {
-
         new Thread(new Runnable() {
             @Override
             public void run() {

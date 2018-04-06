@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.PetShowActivity;
 import com.a1074718775qq.yichong.adapter.PetShowRvAdapter;
-import com.a1074718775qq.yichong.bean.PetNews;
 import com.a1074718775qq.yichong.bean.PetShow;
 import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.NetworkUtil;
@@ -36,7 +36,6 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 public class CommunityFragment extends Fragment {
     Context mContext=getActivity();
-    private List<PetShow> petShows;//对象列表
     //对象列表
     private ArrayList<PetShow> fullShow=new ArrayList<>();
     View view;
@@ -46,12 +45,10 @@ public class CommunityFragment extends Fragment {
     //对萌宠秀初始化
     RecyclerView rv;
     PetShowRvAdapter adapter;
-    PetShow petShow;
     //网络工具
     NetworkUtil network;
     //萌宠秀id
     private static int show_id=0;
-    int photo[];
     //加入轮播图的图片，后期会用网络加入
     int RES[]={R.drawable.photo1,R.drawable.photo2,R.drawable.photo3};
     // TODO: Rename parameter arguments, choose names that match
@@ -89,7 +86,7 @@ public class CommunityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view=inflater.inflate(R.layout.fragment_community, container, false);
@@ -103,54 +100,70 @@ public class CommunityFragment extends Fragment {
         if(network.isNetworkAvailable(getActivity()))
         {
             try {
-                //requestFromsql();
+                requestFromsql();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         else
         {
-            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),"无法连接网络，请检查网络连接！",Toast.LENGTH_LONG).show();
             refreshview.stopLoadMore();
         }
         return view;
     }
+
+
 //从数据库中加载信息
     private void requestFromsql() {
-        //创建一个Map对象
-        Map<String, Integer> map = new HashMap<>();
-        map.put("pet_show_id", show_id);
         //转成JSON数据
-        final String json = JSON.toJSONString(map, true);
-        try {
-            HttpUtils.doPostAsy(getString(R.string.GetPetShowInterface), json, new HttpUtils.CallBack() {
-                public void onRequestComplete(final String result) {
-                    List<PetShow> show = JSON.parseArray(result.trim(), PetShow.class);
-                    fullShow.addAll(show);
-                    if (show.size() != 0) {
-                        //判断是不是初始化，如果是，则初始化
-                        if (show_id == 0) {
-                            initCardview(show);
-                            show_id = show_id + show.size();
-                        } else {
-                            //如果不是则在rv里面继续增加
-                            addCardview(show);
-                            show_id = show_id + show.size();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //创建一个Map对象
+                Map<String, Integer> map = new HashMap<>();
+                map.put("pet_show_id", show_id);
+                final String json = JSON.toJSONString(map, true);
+                try {
+                    HttpUtils.doPostAsy(getString(R.string.GetPetShowInterface), json, new HttpUtils.CallBack() {
+                        public void onRequestComplete(final String result) {
+                            List<PetShow> show = JSON.parseArray(result.trim(), PetShow.class);
+                            fullShow.addAll(show);
+                            if (show.size() != 0) {
+                                //判断是不是初始化，如果是，则初始化
+                                if (show_id == 0) {
+                                    initCardview(show);
+                                    show_id = show_id + show.size();
+                                } else {
+                                    //如果不是则在rv里面继续增加
+                                    addCardview(show);
+                                    show_id = show_id + show.size();
+                                }
+                            } else {
+                                refreshview.setHideFooterWhenComplete(true);
+                            }
                         }
-                    } else {
-                        refreshview.setHideFooterWhenComplete(true);
-                    }
+
+                    });
                 }
-            });
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
-        }
+                catch (Exception e)
+                {
+                    Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
+                }
+            }
+        }).start();
     }
 
-    private void addCardview(List<PetShow> show) {
-
+    private void addCardview(final List<PetShow> show) {
+        if(show != null) {
+            adapter.addMoreItem(show);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+    }
     }
 
     private void initCardview(final List<PetShow> show) {
@@ -167,6 +180,10 @@ public class CommunityFragment extends Fragment {
             }
         });
     }
+
+
+
+//    初始化轮播图
     private void initBanner() {
         List<Integer> list = new ArrayList<>();
         for(int i=0;i<RES.length;i++){
@@ -225,7 +242,7 @@ public class CommunityFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(network.isNetworkAvailable(getActivity()))
+                        if(NetworkUtil.isNetworkAvailable(getActivity()))
                         {
                             try {
                                 requestFromsql();
