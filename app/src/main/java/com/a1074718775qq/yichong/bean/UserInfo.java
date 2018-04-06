@@ -2,11 +2,13 @@ package com.a1074718775qq.yichong.bean;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * create by 刘晓童
  * on 2018/2/2 0002
  */
-public class UserInfo {
+public class UserInfo  implements Serializable {
     private int user_id;
     private Bitmap user_icon;
     private String user_name;

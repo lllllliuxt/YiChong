@@ -55,7 +55,7 @@ public class NewsWebActivity extends AppCompatActivity {
         // 设置可以支持缩放
        webSettings.setSupportZoom(true);
         //其他细节操作
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开webview中缓存
         webSettings.setAllowFileAccess(true); //设置可以访问文件
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
@@ -79,7 +79,7 @@ public class NewsWebActivity extends AppCompatActivity {
         // 3. 开启Application Cache存储机制
 
 
-        wb.setWebViewClient(new WebViewClient() {
+        wb.setWebViewClient(    new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
             }

@@ -1,8 +1,12 @@
 package com.a1074718775qq.yichong.bean;
 
+import android.graphics.Bitmap;
+
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class PetNews {
+import java.io.Serializable;
+
+public class PetNews implements Serializable {
     @JSONField(name="news_id")
     int news_id;
     @JSONField(name="news_picture")
@@ -17,6 +21,7 @@ public class PetNews {
     {
 
     }
+
     public int getNews_id() {
         return news_id;
     }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.bean.WelfareProject;
+import com.youth.xframe.cache.XCache;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -22,13 +23,14 @@ import java.util.List;
 public class WelfareRvAdapter extends RecyclerView.Adapter<WelfareRvAdapter.WelfareViewHolder> {
     Context mContext;
     private List<WelfareProject> welfareProject;
-
+    XCache mcache;
     public WelfareRvAdapter()
     {}
-    public WelfareRvAdapter(List<WelfareProject> welfareProject,Context mContext)
+    public WelfareRvAdapter(List<WelfareProject> welfareProject,Context mContext,XCache mcache)
     {
         this.welfareProject=welfareProject;
         this.mContext=mContext;
+        this.mcache=mcache;
     }
     @Override
     public WelfareViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,20 +43,29 @@ public class WelfareRvAdapter extends RecyclerView.Adapter<WelfareRvAdapter.Welf
 
     @Override
     public void onBindViewHolder(final WelfareViewHolder holder, final int position) {
-        //新建线程加载图片信息，发送到消息队列中
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                final Bitmap bmp = getURLimage(welfareProject.get(position).getWelfare_picture());
-                holder.picture.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        holder.picture.setImageBitmap(bmp);
-                    }
-                });
-            }
-        }).start();
+        //    如果有图片，则直接加载缓存里面的图片
+        Bitmap temBmp=mcache.getAsBitmap("welfareImage"+position);
+        if(temBmp!=null)
+        {
+            holder.picture.setImageBitmap(temBmp);
+        }
+        else {
+            //新建线程加载图片信息，发送到消息队列中
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    final Bitmap bmp = getURLimage(welfareProject.get(position).getWelfare_picture());
+                    mcache.put("welfareImage"+position,bmp,15*XCache.TIME_DAY);
+                    holder.picture.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.picture.setImageBitmap(bmp);
+                        }
+                    });
+                }
+            }).start();
+        }
         holder.title.setText(welfareProject.get(position).getWelfare_title());
         holder.phone.setText(welfareProject.get(position).getWelfare_phone());
         holder.address.setText(welfareProject.get(position).getWelfare_address());

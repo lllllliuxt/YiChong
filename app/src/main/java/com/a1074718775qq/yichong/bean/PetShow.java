@@ -4,13 +4,14 @@ import android.graphics.Bitmap;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * create by 刘晓童
  * on 2018/2/1 0001
  */
-public class PetShow {
+public class PetShow implements Serializable {
     @JSONField(name="pet_show_id")
     String pet_show_id;
     @JSONField(name="pet_show_photo")
@@ -40,6 +41,7 @@ public class PetShow {
      * @param user_icon_time 用户发布头像的时间
      * @param photo 萌宠秀图片数组
      */
+
     public PetShow(String pet_show_id, int pet_show_photo, String pet_show_context, String pet_show_time, String user_id, String user_name, String user_icon, String user_icon_time, Bitmap[] photo) {
         this.pet_show_id = pet_show_id;
         this.pet_show_photo = pet_show_photo;
@@ -51,6 +53,10 @@ public class PetShow {
         this.user_icon_time = user_icon_time;
         this.photo = photo;
     }
+
+    public PetShow() {
+    }
+
     public String getPet_show_time() {
         return pet_show_time;
     }

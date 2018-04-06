@@ -24,6 +24,7 @@ import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.NewsWebActivity;
 import com.a1074718775qq.yichong.adapter.NewsRvAdapter;
 import com.a1074718775qq.yichong.bean.PetNews;
+import com.a1074718775qq.yichong.bean.PetShow;
 import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.a1074718775qq.yichong.utils.RecyclerItemClickListener;
@@ -31,9 +32,11 @@ import com.a1074718775qq.yichong.widget.BannerViewHolder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.andview.refreshview.XRefreshView;
+import com.youth.xframe.cache.XCache;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,6 +69,8 @@ public class HomeFragment extends Fragment{
     NewsRvAdapter adapter;
     //网络工具
     NetworkUtil network;
+    //      缓存工具
+    XCache mcache;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,7 +80,6 @@ public class HomeFragment extends Fragment{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     public HomeFragment() {
@@ -122,19 +126,36 @@ public class HomeFragment extends Fragment{
         initBanner();
         //请求服务器加载新闻
         network=new NetworkUtil();
-        //如果有网则请求服务器加载
-        if(network.isNetworkAvailable(getActivity()))
-        {
-            try {
-                requestFromsql();
-            } catch (Exception e) {
-                e.printStackTrace();
+        //      缓存工具  50M
+        mcache=XCache.get(this.getActivity(),1000 * 1000 * 50,200);
+//        如果第0条新闻已经缓存，则直接取出来
+        if (mcache.getAsObject("news0")!=null) {
+            ArrayList<PetNews>  news=new ArrayList<PetNews>();
+            for (int i=0;i<5;i++)
+            {
+                PetNews petnews=(PetNews) mcache.getAsObject("news"+i);
+                if (null!=petnews) {
+                    news.add(petnews);
+                    news_id++;
+                }
             }
-        }
-       else
-        {
-            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
             refreshview.stopLoadMore();
+            fullnews.addAll(news);
+            initCardview(news);
+        }
+        else
+        {
+            //如果有网则请求服务器加载
+            if (NetworkUtil.isNetworkAvailable(getActivity())) {
+                try {
+                    requestFromsql();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                refreshview.stopLoadMore();
+            }
         }
         return view;
     }
@@ -165,17 +186,34 @@ public class HomeFragment extends Fragment{
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(network.isNetworkAvailable(getActivity()))
+                        if (mcache.getAsObject("news"+news_id)!=null)
                         {
-                            try {
-                                requestFromsql();
-                                //写入缓存
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            ArrayList<PetNews> news=new ArrayList<PetNews>();
+                            for (int i=news_id;i<5+news_id;i++)
+                            {
+                                PetNews petnews=(PetNews) mcache.getAsObject("news"+i);
+                                if (null!=petnews) {
+                                    news.add(petnews);
+                                    news_id++;
+                                }
                             }
-                        }else
+                            fullnews.addAll(news);
+                            addCardview(news);
+                        }
+                        else
                         {
-                            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+                            if (network.isNetworkAvailable(getActivity()))
+                            {
+                                try {
+                                    requestFromsql();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                            }
                         }
                             refreshview.stopLoadMore();
 
@@ -201,7 +239,6 @@ public class HomeFragment extends Fragment{
                     intent.putExtra("url",fullnews.get(position).getNews_url());
                     startActivity(intent);
             }
-
             @Override
             public void onLongClick(View view, int posotion) {
 
@@ -221,8 +258,16 @@ public class HomeFragment extends Fragment{
             HttpUtils.doPostAsy(getString(R.string.NewsInterface), json, new HttpUtils.CallBack() {
                 public void onRequestComplete(final String result) {
                     List<PetNews> news = JSON.parseArray(result.trim(), PetNews.class);
+//                    对新闻事件监听做准备
                     fullnews.addAll(news);
                     if (news.size() != 0) {
+//                        写入缓存,命名为news加id
+
+                        for(int i=news_id,j=0;i<news_id+news.size();i++,j++)
+                        {
+//                            缓存保存两天
+                            mcache.put("news"+i,news.get(j),2*XCache.TIME_DAY);
+                        }
                         //判断是不是初始化，如果是，则初始化
                         if (news_id == 0) {
                             initCardview(news);
@@ -254,7 +299,7 @@ public class HomeFragment extends Fragment{
                 rv.setLayoutManager(lm);
                 rv.setNestedScrollingEnabled(false);//禁止滑动
                 //添加适配器
-                adapter = new NewsRvAdapter(news,mContext);
+                adapter = new NewsRvAdapter(news,mContext,mcache);
                 rv.setAdapter(adapter);
             }
         });

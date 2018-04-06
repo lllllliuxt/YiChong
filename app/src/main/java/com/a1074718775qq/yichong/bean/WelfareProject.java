@@ -2,11 +2,13 @@ package com.a1074718775qq.yichong.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
+
 /**
  * create by 刘晓童
  * on 2018/2/5 0005
  */
-public class WelfareProject {
+public class WelfareProject  implements Serializable {
     @JSONField(name="welfare_id")
     int welfare_id;
     @JSONField(name="welfare_title")

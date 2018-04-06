@@ -31,6 +31,7 @@ import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.alibaba.fastjson.JSON;
 import com.andview.refreshview.XRefreshView;
+import com.youth.xframe.cache.XCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,9 +62,11 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
     //网络工具
     NetworkUtil network;
 //    福利适配器
-WelfareRvAdapter adapter;
+    WelfareRvAdapter adapter;
 //收养所id
-    private int welfare_id=0;
+    private static int welfare_id=0;
+    //      缓存工具
+    XCache mcache;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -118,22 +121,40 @@ WelfareRvAdapter adapter;
         refreshview.setPullLoadEnable(true);
         //请求服务器加载新闻
         network=new NetworkUtil();
-        //如果有网则请求服务器加载
-        if(NetworkUtil.isNetworkAvailable(getActivity()))
-        {
-            try {
-                requestFromsql();
-            } catch (Exception e) {
-                e.printStackTrace();
+        //      缓存工具  50M
+        mcache=XCache.get(this.getActivity(),1000 * 1000 * 50,200);
+        //        如果第0条收容所已经缓存，则直接取出来
+        if (mcache.getAsObject("welfare0")!=null) {
+            ArrayList<WelfareProject>  welfare=new ArrayList<WelfareProject>();
+            for (int i=0;i<5;i++)
+            {
+                WelfareProject petwelfare=(WelfareProject) mcache.getAsObject("welfare"+i);
+                if (null!=petwelfare) {
+                    welfare.add(petwelfare);
+                    welfare_id++;
+                }
+            }
+            refreshview.stopLoadMore();
+            welfareFull.addAll(welfare);
+            initCardview(welfare);
+        }
+        else {
+            //如果有网则请求服务器加载
+            if (NetworkUtil.isNetworkAvailable(getActivity())) {
+                try {
+                    requestFromsql();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                refreshview.stopLoadMore();
             }
         }
-        else
-        {
-            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
-            refreshview.stopLoadMore();
-        }
-        return view;
+            return view;
     }
+
+
     //请求数据库
     private void requestFromsql() {
         //把当前的news_id发给服务器，返回新闻对象
@@ -148,6 +169,11 @@ WelfareRvAdapter adapter;
                     List<WelfareProject>  welfare = JSON.parseArray(result.trim(), WelfareProject.class);
                     welfareFull.addAll(welfare);
                     if (welfare.size() != 0) {
+                        for(int i=welfare_id,j=0;i<welfare_id+welfare.size();i++,j++)
+                        {
+//                            缓存保存两天
+                            mcache.put("welfare"+i,welfare.get(j),15*XCache.TIME_DAY);
+                        }
                         //判断是不是初始化，如果是，则初始化
                         if (welfare_id == 0) {
                             initCardview(welfare);
@@ -213,6 +239,20 @@ WelfareRvAdapter adapter;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (mcache.getAsObject("welfare"+welfare_id)!=null)
+                        {
+                            ArrayList<WelfareProject> welfare=new ArrayList<WelfareProject>();
+                            for (int i=welfare_id;i<5+welfare_id;i++)
+                            {
+                                WelfareProject petwelfare=(WelfareProject) mcache.getAsObject("welfare"+i);
+                                if (null!=petwelfare) {
+                                    welfare.add(petwelfare);
+                                    welfare_id++;
+                                }
+                            }
+                            welfareFull.addAll(welfare);
+                            addCardview(welfare);
+                        }
                         if(NetworkUtil.isNetworkAvailable(getActivity()))
                         {
                             try {
@@ -256,7 +296,7 @@ WelfareRvAdapter adapter;
                 rv.setLayoutManager(lm);
                 rv.setNestedScrollingEnabled(false);//禁止滑动
                 //添加适配器
-                adapter = new WelfareRvAdapter(welfare,getActivity());
+                adapter = new WelfareRvAdapter(welfare,getActivity(),mcache);
                 rv.setAdapter(adapter);
             }
         });
