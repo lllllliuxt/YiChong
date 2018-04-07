@@ -8,4 +8,14 @@
     android:orientation="vertical"
     android:background="@mipmap/startphoto"
     tools:context=".activity.StartActivity">
+    <Button
+        android:id="@+id/skip"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="40dp"
+        android:alpha="0.3"
+        android:background="#d6d3d3"
+        android:layout_marginLeft="290dp"
+        android:text="跳过"
+        android:textColor="#000"/>
 </LinearLayout>

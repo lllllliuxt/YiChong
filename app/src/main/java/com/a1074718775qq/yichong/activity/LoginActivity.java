@@ -145,7 +145,6 @@ CircularProgressButton loginButton;
                 {
                     try {
                         if (verifyCode.length() == 4) {
-                            Log.d(tag, verification.getText().toString());
                             // 注册一个事件回调，用于处理提交验证码操作的结果
                             SMSSDK.registerEventHandler(new EventHandler() {
                                 public void afterEvent(int event, int result, Object data) {

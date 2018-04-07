@@ -24,7 +24,9 @@ import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AdoptPetActivity;
+import com.a1074718775qq.yichong.activity.AdoptPetUiActivity;
 import com.a1074718775qq.yichong.activity.FindPetActivity;
+import com.a1074718775qq.yichong.activity.FindPetUiActivity;
 import com.a1074718775qq.yichong.adapter.WelfareRvAdapter;
 import com.a1074718775qq.yichong.bean.WelfareProject;
 import com.a1074718775qq.yichong.utils.HttpUtils;
@@ -124,33 +126,38 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
         //      缓存工具  50M
         mcache=XCache.get(this.getActivity(),1000 * 1000 * 50,200);
         //        如果第0条收容所已经缓存，则直接取出来
-        if (mcache.getAsObject("welfare0")!=null) {
-            ArrayList<WelfareProject>  welfare=new ArrayList<WelfareProject>();
-            for (int i=0;i<5;i++)
-            {
-                WelfareProject petwelfare=(WelfareProject) mcache.getAsObject("welfare"+i);
-                if (null!=petwelfare) {
-                    welfare.add(petwelfare);
-                    welfare_id++;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (mcache.getAsObject("welfare0")!=null) {
+                    ArrayList<WelfareProject>  welfare=new ArrayList<WelfareProject>();
+                    for (int i=0;i<5;i++)
+                    {
+                        WelfareProject petwelfare=(WelfareProject) mcache.getAsObject("welfare"+i);
+                        if (null!=petwelfare) {
+                            welfare.add(petwelfare);
+                            welfare_id++;
+                        }
+                    }
+                    refreshview.stopLoadMore();
+                    welfareFull.addAll(welfare);
+                    initCardview(welfare);
+                }
+                else {
+                    //如果有网则请求服务器加载
+                    if (NetworkUtil.isNetworkAvailable(getActivity())) {
+                        try {
+                            requestFromsql();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                        refreshview.stopLoadMore();
+                    }
                 }
             }
-            refreshview.stopLoadMore();
-            welfareFull.addAll(welfare);
-            initCardview(welfare);
-        }
-        else {
-            //如果有网则请求服务器加载
-            if (NetworkUtil.isNetworkAvailable(getActivity())) {
-                try {
-                    requestFromsql();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
-                refreshview.stopLoadMore();
-            }
-        }
+        }).start();
             return view;
     }
 
@@ -203,7 +210,7 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
        feedpet.setOnClickListener(new OnClickListener() {
            @Override
            public void onClick(View v) {
-               Intent intent=new Intent(getActivity(),AdoptPetActivity.class);
+               Intent intent=new Intent(getActivity().getApplicationContext(),AdoptPetUiActivity.class);
                startActivity(intent);
            }
        });
@@ -211,7 +218,7 @@ public class  WelfareFragment extends Fragment implements OnQueryTextListener{
         pethome.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getActivity(),FindPetActivity.class);
+                Intent intent=new Intent(getActivity().getApplicationContext(),FindPetUiActivity.class);
                 startActivity(intent);
             }
         });

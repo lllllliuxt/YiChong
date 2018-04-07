@@ -59,6 +59,7 @@ dependencies {
     compile 'com.aliyun.dpa:oss-android-sdk:2.8.0'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.squareup.okio:okio:1.13.0'
+    compile 'com.github.mcxtzhang:ZLayoutManager:V1.1.0'
     // 在MobSDK的扩展中注册SMSSDK的相关信息
     MobSDK {
         appKey "2402221931b7d"

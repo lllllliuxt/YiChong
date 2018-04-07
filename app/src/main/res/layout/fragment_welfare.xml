@@ -49,8 +49,6 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
             android:background="#fff"
-            android:clickable="true"
-            android:focusableInTouchMode="true"
             >
         <ImageView
             android:layout_width="wrap_content"
@@ -80,8 +78,6 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
             android:background="#fff"
-            android:clickable="true"
-            android:focusableInTouchMode="true"
             >
         <ImageView
             android:layout_width="wrap_content"

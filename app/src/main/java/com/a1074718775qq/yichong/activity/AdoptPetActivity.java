@@ -75,7 +75,7 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     private File file;
     //    用户id
     private int user_id;
-    //    萌宠秀内容
+    //    收养内容
     private String petContext;
     //    发布时间
     private long currentTime;

@@ -1,10 +1,14 @@
 package com.a1074718775qq.yichong.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.a1074718775qq.yichong.R;
@@ -30,6 +35,7 @@ public class StartActivity extends AppCompatActivity {
     //网络工具
     NetworkUtil network;
     MyDatebaseHelper sql;
+    Button skip;
     private static final int REQUEST_CODE = 0; // 请求码
     // 所需的全部权限
     static final String[] PERMISSIONS = new String[]{
@@ -37,6 +43,19 @@ public class StartActivity extends AppCompatActivity {
             Manifest.permission.CAMERA,//摄像头权限
             Manifest.permission.ACCESS_COARSE_LOCATION,//网络定位
             Manifest.permission.ACCESS_FINE_LOCATION//GPS定位
+    };
+    private int countSeconds = 6;//倒计时e秒数
+    @SuppressLint("HandlerLeak")
+    private Handler mCountHandler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (countSeconds > 0) {
+                --countSeconds;
+                skip.setText("跳过(" + countSeconds + ")");
+                mCountHandler.sendEmptyMessageDelayed(0, 1000);
+            }
+        }
     };
     private PermissionsChecker mPermissionsChecker; // 权限检测器
     @Override
@@ -54,11 +73,19 @@ public class StartActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         //淡入淡出
-        AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
-
+        final AlphaAnimation aa = new AlphaAnimation(1.0f,1.0f);
         //设置持续时间
-        aa.setDuration(2000);
+        aa.setDuration(6000);
         view.startAnimation(aa);
+        startCountBack();
+        skip=findViewById(R.id.skip);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aa.cancel();
+            }
+        });
+
         aa.setAnimationListener(new Animation.AnimationListener()
         {
             //动画页面结束后要干嘛
@@ -73,11 +100,21 @@ public class StartActivity extends AppCompatActivity {
 
         });
     }
+    //获取验证码信息,进行计时操作
+    private void startCountBack() {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCountHandler.sendEmptyMessage(0);
+            }
+        });
+    }
+
     private void redirectTo(){
         //判断用户是否登录过
        SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
-      // if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
-       if(false)
+      if (sp.getString("userId",null) == null || (sp.getLong("deadline",0) < System.currentTimeMillis()) )
+       //if(false)
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

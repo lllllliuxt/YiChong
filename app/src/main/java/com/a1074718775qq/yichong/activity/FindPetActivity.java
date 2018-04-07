@@ -1,8 +1,6 @@
 package com.a1074718775qq.yichong.activity;
 
-import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
@@ -10,14 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.a1074718775qq.yichong.R;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.text.SimpleDateFormat;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -61,6 +56,9 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
     private final int IMAGE_OPEN = 4; // 打开图片标记
     private String pathImage; // 选择图片路径
     private Bitmap bmp; // 导入临时图片
+
+    Uri uritempFile;
+
     private ArrayList<HashMap<String, Object>> imageItem;
     private SimpleAdapter simpleAdapter; // 适配器
     private Button returnButton;
@@ -235,14 +233,13 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
             return;
         if (data == null)
             return;
-
         // 处理结果
         if (requestCode == PHOTORESOULT) {
             Bundle extras = data.getExtras();
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0-100)压缩文件
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);// (0-100)压缩文件
                 bit.add(photo);
                 // 将图片放入gridview中
                 HashMap<String, Object> map = new HashMap<String, Object>();
@@ -356,6 +353,8 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
     public void startPhotoZoom(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.putExtra("crop", "true");
         // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);

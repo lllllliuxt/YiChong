@@ -1,9 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ded8d8"
+    android:orientation="vertical"
     tools:context="com.a1074718775qq.yichong.activity.FindPetUiActivity">
-
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="370dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:background="@color/XFrame_white"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/find_pet_return"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:background="@mipmap/returnbutton"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#2d2c2c"
+            android:layout_gravity="center"
+            android:layout_marginLeft="115dp"
+            android:text="宝贝回家"/>
+        <TextView
+            android:id="@+id/find_pet_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#275ea6"
+            android:textSize="19sp"
+            android:layout_marginLeft="55dp"
+            android:layout_marginTop="35dp"
+            android:text="发布"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/find_pet_list"
+            android:layout_width="320dp"
+            android:layout_height="430dp"
+            android:layoutAnimation="@anim/layout_animation_fall_down">
+        </android.support.v7.widget.RecyclerView>
+         </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            >
+            <Button
+                android:id="@+id/find_pet_another"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@mipmap/another"
+               />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

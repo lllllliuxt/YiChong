@@ -25,4 +25,6 @@
     <string name="userInfoInterface">http://112.74.188.94:8080/pet/UserInfo.jsp</string>
     <string name="UpuserInfoInterface">http://112.74.188.94:8080/pet/UpUserInfo.jsp</string>
     <string name="GetPetShowInterface">http://112.74.188.94:8080/pet/GetPetShow.jsp</string>
+    <string name="GetFindPetInterface">http://112.74.188.94:8080/pet/GetFindPet.jsp</string>
+    <string name="GetAdoptPetInterface">http://112.74.188.94:8080/pet/GetAdoptPet.jsp</string>
 </resources>

@@ -155,6 +155,37 @@
                 android:src="@mipmap/goto_button"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/clearCache"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#fff"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp"
+                android:textColor="#000"
+                android:text="清除缓存"/>
+            <TextView
+                android:id="@+id/cachesize"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="150dp"
+                android:textSize="15sp"
+                android:textColor="#888"/>
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/goto_button"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="vertical"

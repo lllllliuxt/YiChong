@@ -128,35 +128,41 @@ public class HomeFragment extends Fragment{
         network=new NetworkUtil();
         //      缓存工具  50M
         mcache=XCache.get(this.getActivity(),1000 * 1000 * 50,200);
-//        如果第0条新闻已经缓存，则直接取出来
-        if (mcache.getAsObject("news0")!=null) {
-            ArrayList<PetNews>  news=new ArrayList<PetNews>();
-            for (int i=0;i<5;i++)
-            {
-                PetNews petnews=(PetNews) mcache.getAsObject("news"+i);
-                if (null!=petnews) {
-                    news.add(petnews);
-                    news_id++;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //        如果第0条新闻已经缓存，则直接取出来
+                if (mcache.getAsObject("news0")!=null) {
+                    ArrayList<PetNews>  news=new ArrayList<PetNews>();
+                    for (int i=0;i<5;i++)
+                    {
+                        PetNews petnews=(PetNews) mcache.getAsObject("news"+i);
+                        if (null!=petnews) {
+                            news.add(petnews);
+                            news_id++;
+                        }
+                    }
+                    refreshview.stopLoadMore();
+                    fullnews.addAll(news);
+                    initCardview(news);
                 }
-            }
-            refreshview.stopLoadMore();
-            fullnews.addAll(news);
-            initCardview(news);
-        }
-        else
-        {
-            //如果有网则请求服务器加载
-            if (NetworkUtil.isNetworkAvailable(getActivity())) {
-                try {
-                    requestFromsql();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                else
+                {
+                    //如果有网则请求服务器加载
+                    if (NetworkUtil.isNetworkAvailable(getActivity())) {
+                        try {
+                            requestFromsql();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                        refreshview.stopLoadMore();
+                    }
                 }
-            } else {
-                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
-                refreshview.stopLoadMore();
+
             }
-        }
+        }).start();
         return view;
     }
 
@@ -262,7 +268,6 @@ public class HomeFragment extends Fragment{
                     fullnews.addAll(news);
                     if (news.size() != 0) {
 //                        写入缓存,命名为news加id
-
                         for(int i=news_id,j=0;i<news_id+news.size();i++,j++)
                         {
 //                            缓存保存两天
@@ -288,7 +293,6 @@ public class HomeFragment extends Fragment{
             Toast.makeText(getActivity(),"网络异常,请检查网络连接",Toast.LENGTH_LONG).show();
         }
     }
-
 //初始化cardview
     private void initCardview(final List<PetNews> news) {
         //添加布局管理器
@@ -297,7 +301,7 @@ public class HomeFragment extends Fragment{
             @Override
             public void run() {
                 rv.setLayoutManager(lm);
-                rv.setNestedScrollingEnabled(false);//禁止滑动
+                rv.setNestedScrollingEnabled(true);//禁止滑动
                 //添加适配器
                 adapter = new NewsRvAdapter(news,mContext,mcache);
                 rv.setAdapter(adapter);

@@ -57,12 +57,12 @@ public class WelfareRvAdapter extends RecyclerView.Adapter<WelfareRvAdapter.Welf
                     // TODO Auto-generated method stub
                     final Bitmap bmp = getURLimage(welfareProject.get(position).getWelfare_picture());
                     mcache.put("welfareImage"+position,bmp,15*XCache.TIME_DAY);
-                    holder.picture.post(new Runnable() {
+                    holder.picture.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             holder.picture.setImageBitmap(bmp);
                         }
-                    });
+                    },50);
                 }
             }).start();
         }

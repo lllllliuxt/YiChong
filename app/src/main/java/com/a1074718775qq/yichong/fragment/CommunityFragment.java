@@ -24,6 +24,7 @@ import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.a1074718775qq.yichong.widget.BannerViewHolder;
 import com.alibaba.fastjson.JSON;
 import com.andview.refreshview.XRefreshView;
+import com.youth.xframe.cache.XCache;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
@@ -49,6 +50,8 @@ public class CommunityFragment extends Fragment {
     NetworkUtil network;
     //萌宠秀id
     private static int show_id=0;
+    //      缓存工具
+    XCache mcache;
     //加入轮播图的图片，后期会用网络加入
     int RES[]={R.drawable.photo1,R.drawable.photo2,R.drawable.photo3};
     // TODO: Rename parameter arguments, choose names that match
@@ -96,23 +99,43 @@ public class CommunityFragment extends Fragment {
         refreshview.setPullLoadEnable(true);
         //初始化轮播图
         initBanner();
-        //如果有网则请求服务器加载
-        if(network.isNetworkAvailable(getActivity()))
-        {
-            try {
-                requestFromsql();
-            } catch (Exception e) {
-                e.printStackTrace();
+        //      缓存工具  70M
+        mcache=XCache.get(this.getActivity(),1000 * 1000 * 70,200);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //        如果第0条petshow已经缓存，则直接取出来
+                if (mcache.getAsObject("petshow0")!=null) {
+                    ArrayList<PetShow>  shows=new ArrayList<PetShow>();
+                    for (int i=0;i<5;i++)
+                    {
+                        PetShow petShow=(PetShow) mcache.getAsObject("petshow"+i);
+                        if (null!=petShow) {
+                            shows.add(petShow);
+                            show_id++;
+                        }
+                    }
+                    refreshview.stopLoadMore();
+                    fullShow.addAll(shows);
+                    initCardview(shows);
+                }
+                else {
+                    //如果有网则请求服务器加载
+                    if (network.isNetworkAvailable(getActivity())) {
+                        try {
+                            requestFromsql();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "无法连接网络，请检查网络连接！", Toast.LENGTH_LONG).show();
+                        refreshview.stopLoadMore();
+                    }
+                }
             }
-        }
-        else
-        {
-            Toast.makeText(getActivity(),"无法连接网络，请检查网络连接！",Toast.LENGTH_LONG).show();
-            refreshview.stopLoadMore();
-        }
+        }).start();
         return view;
     }
-
 
 //从数据库中加载信息
     private void requestFromsql() {
@@ -130,6 +153,12 @@ public class CommunityFragment extends Fragment {
                             List<PetShow> show = JSON.parseArray(result.trim(), PetShow.class);
                             fullShow.addAll(show);
                             if (show.size() != 0) {
+       //                        写入缓存,命名为petshow加id
+                                for(int i=show_id,j=0;i<show_id+show.size();i++,j++)
+                                {
+//                            缓存保存1天
+                                    mcache.put("petshow"+i,show.get(j),1*XCache.TIME_DAY);
+                                }
                                 //判断是不是初始化，如果是，则初始化
                                 if (show_id == 0) {
                                     initCardview(show);
@@ -175,7 +204,7 @@ public class CommunityFragment extends Fragment {
                 rv.setLayoutManager(lm);
                 rv.setNestedScrollingEnabled(false);//禁止滑动
                 //添加适配器
-                adapter = new PetShowRvAdapter(show,mContext);
+                adapter = new PetShowRvAdapter(show,getActivity(),mcache);
                 rv.setAdapter(adapter);
             }
         });
@@ -242,16 +271,31 @@ public class CommunityFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(NetworkUtil.isNetworkAvailable(getActivity()))
+                        if (mcache.getAsObject("petshow"+show_id)!=null)
                         {
-                            try {
-                                requestFromsql();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            ArrayList<PetShow> shows=new ArrayList<PetShow>();
+                            for (int i=show_id;i<5+show_id;i++)
+                            {
+                                PetShow petShow=(PetShow) mcache.getAsObject("petshow"+i);
+                                if (null!=petShow) {
+                                    shows.add(petShow);
+                                    show_id++;
+                                }
                             }
-                        }else
+                            fullShow.addAll(shows);
+                            addCardview(shows);
+                        }
+                        else
                         {
-                            Toast.makeText(getActivity(),"无法连接网络",Toast.LENGTH_LONG).show();
+                            if (NetworkUtil.isNetworkAvailable(getActivity())) {
+                                try {
+                                    requestFromsql();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "无法连接网络", Toast.LENGTH_LONG).show();
+                            }
                         }
                         refreshview.stopLoadMore();
 
@@ -276,11 +320,6 @@ public class CommunityFragment extends Fragment {
         rv=view.findViewById(R.id.pet_show_list);
         refreshview=view.findViewById(R.id.refreshview);
     }
-
-
-
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

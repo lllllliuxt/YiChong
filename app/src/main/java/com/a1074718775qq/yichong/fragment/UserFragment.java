@@ -1,5 +1,6 @@
 package com.a1074718775qq.yichong.fragment;
 
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,10 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.net.Uri;
 import android.os.Bundle;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -18,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.activity.AboutUsActivity;
@@ -28,13 +31,8 @@ import com.a1074718775qq.yichong.activity.LoginActivity;
 import com.a1074718775qq.yichong.activity.UserInfoActivity;
 import com.a1074718775qq.yichong.bean.UserInfo;
 import com.a1074718775qq.yichong.datebase.MyDatebaseHelper;
-import com.a1074718775qq.yichong.utils.HttpUtils;
-import com.a1074718775qq.yichong.utils.PostToOss;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.a1074718775qq.yichong.utils.DataCleanManager;
+import com.youth.xframe.widget.XToast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,7 +46,7 @@ import static android.content.Context.MODE_PRIVATE;
  * create an instance of this fragment.
  */
 public class UserFragment extends Fragment {
-    View advice,aboutUs;//LinearLayout布局监听
+    View advice,aboutUs,clear;//LinearLayout布局监听
     Context mContext=getActivity();
     View view;
     private Button edit_info;
@@ -60,8 +58,12 @@ public class UserFragment extends Fragment {
 //    用户喜爱的宠物
     private TextView user_pet;
 //    用户的头像
+    private TextView cachesize;
     private CircleImageView user_icon;
 
+
+    private final int CLEAN_SUC=1001;
+    private final int CLEAN_FAIL=1002;
     //sqlite数据库
     private MyDatebaseHelper db;
 
@@ -115,6 +117,17 @@ public class UserFragment extends Fragment {
        findView();
        onClick();
        initinfo();
+       new Thread(new Runnable() {
+           @Override
+           public void run() {
+               try {
+                   //查看缓存的大小
+                   cachesize.setText(DataCleanManager.getTotalCacheSize(getActivity()));
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }
+       }).start();
        return view;
     }
 
@@ -184,17 +197,36 @@ public class UserFragment extends Fragment {
                 dlg.show();
             }
         });
+//        清除缓存的监听
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //清除操作
+                DataCleanManager.clearAllCache(getActivity());
+                String size= (String) cachesize.getText();
+//                并更新缓存的大小
+                try {
+                    //查看缓存的大小
+                    cachesize.setText(DataCleanManager.getTotalCacheSize(getActivity()));
+                    Toast.makeText(getActivity(),"已经清理了"+size+"缓存！",Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
     private void findView() {
         edit_info=view.findViewById(R.id.edit_info);
         advice= view.findViewById(R.id.user_advice);
         aboutUs= view.findViewById(R.id.user_aboutus);
         exit=view.findViewById(R.id.exit);
+        clear=view.findViewById(R.id.clearCache);
 
         user_icon=view.findViewById(R.id.user_icon);
         user_nick=view.findViewById(R.id.user_nick);
         user_city=view.findViewById(R.id.user_city);
         user_pet=view.findViewById(R.id.user_pet);
+        cachesize=view.findViewById(R.id.cachesize);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -255,4 +287,5 @@ public class UserFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
