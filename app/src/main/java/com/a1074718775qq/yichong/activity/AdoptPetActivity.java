@@ -190,11 +190,13 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
                         for (int i = 0; i < count; i++) {
                             up.upload("adopt_pet/" + user_id + "/img" + "_" + currentTime + "_" + i + ".bmp", bit.get(i));
                         }
+                        String addressText= (String) address.getText();
                         //创建一个Map对象
                         Map<String, Object> map = new HashMap<>();
                         map.put("adopt_photo", count);
                         map.put("adopt_context", petContext);
                         map.put("adopt_time", currentTime);
+                        map.put("adopt_address",addressText);
                         map.put("user_id", user_id);
                         //转成JSON数据
                         final String json = JSON.toJSONString(map, true);
