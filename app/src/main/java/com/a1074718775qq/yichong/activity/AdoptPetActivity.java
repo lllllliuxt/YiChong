@@ -43,20 +43,23 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.a1074718775qq.yichong.utils.HttpUtils;
+import com.a1074718775qq.yichong.utils.LocationFromGaode;
 import com.a1074718775qq.yichong.utils.PostToOss;
 import com.a1074718775qq.yichong.widget.MyDialog;
 import com.a1074718775qq.yichong.widget.MyGridView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
 
 
 public class AdoptPetActivity extends AppCompatActivity implements OnItemClickListener,MyDialog.OnButtonClickListener {
     private Context mContext=AdoptPetActivity.this;
-    private Button returnButton;
-    private Button upload;
+    private Button returnButton,upload;
     private EditText edittext;
     private MyDialog dialog;// 图片选择对话框
     public static final int NONE = 0;
@@ -79,7 +82,9 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
     private String petContext;
     //    发布时间
     private long currentTime;
-
+    //声明定位回调监听器
+    public AMapLocationListener mLocationListener;
+     private TextView address;
     private  ArrayList<Bitmap> bit=new ArrayList<>();//保存bitmap
     PostToOss up=new PostToOss(mContext);
     @Override
@@ -106,6 +111,48 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         initData();
         findView();
         onClick();
+        getAddress();
+    }
+
+    private void getAddress() {
+        final ProgressDialog progress = new ProgressDialog(mContext);
+        progress.setMessage("正在定位...");
+        progress.setCanceledOnTouchOutside(false);
+        progress.show();
+        //实例化定位回调监听器
+        mLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation amapLocation)
+            {
+                if (amapLocation!= null) {
+                    if (amapLocation.getErrorCode() == 0) {
+                        //可在其中解析amapLocation获取相应内容。
+                        //String country=amapLocation.getCountry();//国家信息
+                        String province=amapLocation.getProvince();//省信息
+                        String city=amapLocation.getCity();//城市信息
+                        String block=amapLocation.getDistrict();//城区信息
+                        String street= amapLocation.getStreet();//街道信息
+                        String streetNumber=amapLocation.getStreetNum();//街道门牌号信息
+                        String addresstext=province+city+block+street+streetNumber;
+                        address.setText(addresstext);
+                        if (progress.isShowing())
+                            progress.dismiss();
+                    } else {
+                        Toast.makeText(mContext,"定位失败,请检查定位设置",Toast.LENGTH_SHORT).show();
+                        address.setText("定位失败");
+                        if (progress.isShowing())
+                            progress.dismiss();
+                        //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+                        Log.e("AmapError", "location Error, ErrCode:"
+                                + amapLocation.getErrorCode() + ", errInfo:"
+                                + amapLocation.getErrorInfo());
+                    }
+                }
+            }
+        };
+
+        //获取定位来触发监听器
+        new LocationFromGaode(mContext,mLocationListener).getLocation();
     }
 
     private void onClick() {
@@ -118,77 +165,84 @@ public class AdoptPetActivity extends AppCompatActivity implements OnItemClickLi
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!edittext.getText().toString().equals("")&& simpleAdapter.getCount()>=1)
+                if (address.getText()=="定位失败")
                 {
-                    final ProgressDialog progress = new ProgressDialog(mContext);
-                    progress.setMessage("正在发布...");
-                    progress.setCanceledOnTouchOutside(false);
-                    progress.show();
-//                  获取用户id
-                    SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
-                    String userId=sp.getString("userId",null);
-                    user_id = Integer.parseInt(userId);
-//                  获取寻宠发布的内容
-                    petContext = edittext.getText().toString();
-//                获取当前时间
-                    currentTime = System.currentTimeMillis();
-                    //               获取适配器所包含的所有图片数量
-                    int count = bit.size();
-                    up.initOss();
-                    for (int i = 0; i <count; i++) {
-                        up.upload("adopt_pet/"+user_id+"/img"+"_"+currentTime+"_"+i+ ".bmp",bit.get(i));
-                    }
-                    //创建一个Map对象
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("adopt_photo",count);
-                    map.put("adopt_context", petContext);
-                    map.put("adopt_time", currentTime);
-                    map.put("user_id", user_id);
-                    //转成JSON数据
-                    final String json = JSON.toJSONString(map, true);
-                    Log.e("json",json);
-                    try {
-                        HttpUtils.doPostAsy(getString(R.string.adoptInterface), json, new HttpUtils.CallBack() {
-                            public void onRequestComplete(final String result) {
-                                Log.e("返回结果", result);
-                                JSONObject jsonObject = JSON.parseObject(result.trim());
-                                final String psresult = jsonObject.getString("result");
-                                if (psresult.equals("上传成功")) {
-                                    if (progress.isShowing())
-                                        progress.dismiss();
-                                    //解决在子线程中调用Toast的异常情况处理
-                                    Looper.prepare();
-                                    Toast.makeText(mContext, "上传成功", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                    Looper.loop();
-                                } else {
-                                    if (progress.isShowing())
-                                        progress.dismiss();
-                                    Looper.prepare();
-                                    Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        if (progress.isShowing())
-                            progress.dismiss();
-                        Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
+                    Toast.makeText(mContext,"为了方便更好的救助，请您打开定位",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    Toast.makeText(mContext,"请输入内容和图片",Toast.LENGTH_LONG).show();
+                    if (!edittext.getText().toString().equals("") && simpleAdapter.getCount() >= 1) {
+                        final ProgressDialog progress = new ProgressDialog(mContext);
+                        progress.setMessage("正在发布...");
+                        progress.setCanceledOnTouchOutside(false);
+                        progress.show();
+//                  获取用户id
+                        SharedPreferences sp = mContext.getSharedPreferences("userData", Context.MODE_PRIVATE);
+                        String userId = sp.getString("userId", null);
+                        user_id = Integer.parseInt(userId);
+//                  获取寻宠发布的内容
+                        petContext = edittext.getText().toString();
+//                获取当前时间
+                        currentTime = System.currentTimeMillis();
+                        //               获取适配器所包含的所有图片数量
+                        int count = bit.size();
+                        up.initOss();
+                        for (int i = 0; i < count; i++) {
+                            up.upload("adopt_pet/" + user_id + "/img" + "_" + currentTime + "_" + i + ".bmp", bit.get(i));
+                        }
+                        //创建一个Map对象
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("adopt_photo", count);
+                        map.put("adopt_context", petContext);
+                        map.put("adopt_time", currentTime);
+                        map.put("user_id", user_id);
+                        //转成JSON数据
+                        final String json = JSON.toJSONString(map, true);
+                        Log.e("json", json);
+                        try {
+                            HttpUtils.doPostAsy(getString(R.string.adoptInterface), json, new HttpUtils.CallBack() {
+                                public void onRequestComplete(final String result) {
+                                    Log.e("返回结果", result);
+                                    JSONObject jsonObject = JSON.parseObject(result.trim());
+                                    final String psresult = jsonObject.getString("result");
+                                    if (psresult.equals("上传成功")) {
+                                        if (progress.isShowing())
+                                            progress.dismiss();
+                                        //解决在子线程中调用Toast的异常情况处理
+                                        Looper.prepare();
+                                        Toast.makeText(mContext, "上传成功", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        Looper.loop();
+                                    } else {
+                                        if (progress.isShowing())
+                                            progress.dismiss();
+                                        Looper.prepare();
+                                        Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
+                                        Looper.loop();
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            if (progress.isShowing())
+                                progress.dismiss();
+                            Toast.makeText(mContext, "上传失败", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(mContext, "请输入内容和图片", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
+
+
     }
 
     private void findView() {
         returnButton=findViewById(R.id.abopt_pet_return_button);
         upload=findViewById(R.id.adopt_pet_upload);
         edittext=findViewById(R.id.adopt_pet_text);
+        address=findViewById(R.id.adopt_pet_address);
     }
 
     private void init() {

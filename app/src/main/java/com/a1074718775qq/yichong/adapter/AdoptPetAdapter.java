@@ -76,26 +76,32 @@ public class AdoptPetAdapter extends RecyclerView.Adapter<AdoptPetAdapter.AdoptP
                         public void run() {
                             holder.icon.setImageBitmap(bitmap);
                         }
-                    },50);
+                    },20);
                 }
                 holder.date.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         holder.date.setText(getData(adoptPets.get(position).getAdopt_pet_time()));
                     }
-                },100);
+                },10);
                 holder.nick.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         holder.nick.setText(adoptPets.get(position).getUser_name());
                     }
-                },50);
+                },10);
                 holder.comment.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         holder.comment.setText(adoptPets.get(position).getAdopt_pet_context());
                     }
-                },50);
+                },10);
+                holder.address.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.address.setText(adoptPets.get(position).getAdopt_pet_address());
+                    }
+                },10);
                 getPhoto(adoptPets.get(position).getUser_id(), adoptPets.get(position).getAdopt_pet_time(), adoptPets.get(position).getAdopt_pet_photo(), adoptPets.get(position));
                 List<Map<String, Bitmap>>  listitem = new ArrayList<Map<String, Bitmap>>();
                 for (int i = 0; i < adoptPets.get(position).getPhoto().length; i++) {
@@ -138,6 +144,7 @@ public class AdoptPetAdapter extends RecyclerView.Adapter<AdoptPetAdapter.AdoptP
         TextView date;
         TextView nick;
         TextView comment;
+        TextView address;
         MyGridView photo;
         public AdoptPetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -146,6 +153,7 @@ public class AdoptPetAdapter extends RecyclerView.Adapter<AdoptPetAdapter.AdoptP
             nick = itemView.findViewById(R.id.adopt_pet_usernick);
             date=itemView.findViewById(R.id.adopt_pet_date);
             comment = itemView.findViewById(R.id.adopt_pet_comment);
+            address=itemView.findViewById(R.id.adopt_pet_address);
             photo=itemView.findViewById(R.id.adopt_pet_photo);
         }
     }

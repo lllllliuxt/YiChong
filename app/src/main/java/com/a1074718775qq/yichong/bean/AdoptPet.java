@@ -19,6 +19,8 @@ public class AdoptPet {
     String adopt_pet_context;
     @JSONField(name="adopt_pet_time")
     String adopt_pet_time;
+    @JSONField(name="adopt_pet_address")
+    String adopt_pet_address;
     @JSONField(name="user_id")
     String user_id;
     @JSONField(name="user_name")
@@ -34,31 +36,17 @@ public class AdoptPet {
     {
 
     }
-    public AdoptPet(String adopt_pet_id, int adopt_pet_photo, String adopt_pet_context, String adopt_pet_time, String user_id, String user_name, String user_icon, String user_icon_time, Bitmap[] photo) {
+    public AdoptPet(String adopt_pet_id, int adopt_pet_photo, String adopt_pet_context, String adopt_pet_time, String adopt_pet_address, String user_id, String user_name, String user_icon, String user_icon_time, Bitmap[] photo) {
         this.adopt_pet_id = adopt_pet_id;
         this.adopt_pet_photo = adopt_pet_photo;
         this.adopt_pet_context = adopt_pet_context;
         this.adopt_pet_time = adopt_pet_time;
+        this.adopt_pet_address = adopt_pet_address;
         this.user_id = user_id;
         this.user_name = user_name;
         this.user_icon = user_icon;
         this.user_icon_time = user_icon_time;
         this.photo = photo;
-    }
-
-    @Override
-    public String toString() {
-        return "AdoptPet{" +
-                "adopt_pet_id='" + adopt_pet_id + '\'' +
-                ", adopt_pet_photo=" + adopt_pet_photo +
-                ", adopt_pet_context='" + adopt_pet_context + '\'' +
-                ", adopt_pet_time='" + adopt_pet_time + '\'' +
-                ", user_id='" + user_id + '\'' +
-                ", user_name='" + user_name + '\'' +
-                ", user_icon='" + user_icon + '\'' +
-                ", user_icon_time='" + user_icon_time + '\'' +
-                ", photo=" + Arrays.toString(photo) +
-                '}';
     }
 
     public String getAdopt_pet_id() {
@@ -131,5 +119,29 @@ public class AdoptPet {
 
     public void setPhoto(Bitmap[] photo) {
         this.photo = photo;
+    }
+
+    public String getAdopt_pet_address() {
+        return adopt_pet_address;
+    }
+
+    public void setAdopt_pet_address(String adopt_pet_address) {
+        this.adopt_pet_address = adopt_pet_address;
+    }
+
+    @Override
+    public String toString() {
+        return "AdoptPet{" +
+                "adopt_pet_id='" + adopt_pet_id + '\'' +
+                ", adopt_pet_photo=" + adopt_pet_photo +
+                ", adopt_pet_context='" + adopt_pet_context + '\'' +
+                ", adopt_pet_time='" + adopt_pet_time + '\'' +
+                ", adopt_pet_address='" + adopt_pet_address + '\'' +
+                ", user_id='" + user_id + '\'' +
+                ", user_name='" + user_name + '\'' +
+                ", user_icon='" + user_icon + '\'' +
+                ", user_icon_time='" + user_icon_time + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                '}';
     }
 }
