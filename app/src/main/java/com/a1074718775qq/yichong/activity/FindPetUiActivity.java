@@ -2,16 +2,13 @@ package com.a1074718775qq.yichong.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +19,8 @@ import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.MyRenRenCallback;
 import com.a1074718775qq.yichong.utils.NetworkUtil;
 import com.alibaba.fastjson.JSON;
-import com.andview.refreshview.XRefreshView;
 import com.mcxtzhang.layoutmanager.swipecard.CardConfig;
 import com.mcxtzhang.layoutmanager.swipecard.OverLayCardLayoutManager;
-import com.mcxtzhang.layoutmanager.swipecard.RenRenCallback;
-import com.youth.xframe.widget.XToast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +35,14 @@ public class FindPetUiActivity extends AppCompatActivity {
     //网络工具
     NetworkUtil network;
     //   宝贝回家id
-    private static int find_id=0;
+    private  int find_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_pet_ui);
         findview();
         onclick();
+        find_id=0;
                 //如果有网则请求服务器加载
                 if (network.isNetworkAvailable(mContext)) {
                     try {

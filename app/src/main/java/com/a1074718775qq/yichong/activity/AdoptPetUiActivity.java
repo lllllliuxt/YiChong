@@ -2,11 +2,10 @@ package com.a1074718775qq.yichong.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.adapter.AdoptPetAdapter;
 import com.a1074718775qq.yichong.bean.AdoptPet;
-import com.a1074718775qq.yichong.bean.FindPet;
 import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.MyRenRenCallback;
 import com.a1074718775qq.yichong.utils.NetworkUtil;
@@ -37,13 +35,14 @@ public class AdoptPetUiActivity extends AppCompatActivity {
     //网络工具
     NetworkUtil network;
     //   收养宠物id
-    private static int adopt_id=0;
+    private  int adopt_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adopt_pet_ui);
         findview();
         onclick();
+        adopt_id=0;
         //如果有网则请求服务器加载
         if (network.isNetworkAvailable(mContext)) {
             try {

@@ -1,28 +1,19 @@
 package com.a1074718775qq.yichong.activity;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import com.a1074718775qq.yichong.R;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.os.Bundle;
+import android.os.Looper;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,11 +30,17 @@ import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.Toast;
 
+import com.a1074718775qq.yichong.R;
 import com.a1074718775qq.yichong.utils.HttpUtils;
 import com.a1074718775qq.yichong.utils.PostToOss;
 import com.a1074718775qq.yichong.widget.find_pet_dialog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FindPetActivity extends AppCompatActivity implements OnItemClickListener,find_pet_dialog.OnButtonClickListener{
     Context mContext=FindPetActivity.this;
@@ -56,9 +53,6 @@ public class FindPetActivity extends AppCompatActivity implements OnItemClickLis
     private final int IMAGE_OPEN = 4; // 打开图片标记
     private String pathImage; // 选择图片路径
     private Bitmap bmp; // 导入临时图片
-
-    Uri uritempFile;
-
     private ArrayList<HashMap<String, Object>> imageItem;
     private SimpleAdapter simpleAdapter; // 适配器
     private Button returnButton;
